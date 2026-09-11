@@ -280,7 +280,7 @@ export function GuruProfileForm({ teacher, classes }: GuruProfileFormProps) {
           <Button
             type="submit"
             disabled={isPending}
-            className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer shadow-sm transition-all"
+            size="lg"
           >
             {isPending ? (
               <>

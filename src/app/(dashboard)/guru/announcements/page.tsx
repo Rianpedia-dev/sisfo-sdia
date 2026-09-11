@@ -91,7 +91,7 @@ export default async function GuruAnnouncementsPage() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white mt-2">
+                <Button type="submit" size="lg" className="w-full mt-2">
                   <Send className="h-4 w-4" /> Terbitkan ke Kelas
                 </Button>
               </form>

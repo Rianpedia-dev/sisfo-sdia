@@ -150,12 +150,12 @@ export default async function GuruDashboardPage() {
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
             <Link href={`/guru/attendance/${todayFormatted}`} className="flex-1 sm:flex-none">
-              <Button className="w-full sm:w-auto gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold h-10 px-5 shadow-sm cursor-pointer">
+              <Button variant="default" size="lg" className="w-full sm:w-auto">
                 {totalAbsenToday > 0 ? "Ubah Presensi" : "Isi Presensi Sekarang"}
               </Button>
             </Link>
             <Link href={`/guru/attendance/table/${todayFormatted}`} className="hidden sm:inline-flex">
-              <Button variant="outline" className="gap-2 text-xs sm:text-sm h-10 px-4 cursor-pointer">
+              <Button variant="outline" size="lg">
                 Tabel Matriks
               </Button>
             </Link>

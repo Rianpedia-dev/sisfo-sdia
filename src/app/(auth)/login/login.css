@@ -245,9 +245,10 @@
 .login100-form-btn {
   font-family: 'Ubuntu-Bold', sans-serif;
   font-weight: 700;
-  font-size: 18px;
-  color: #fff;
+  font-size: 16px;
+  color: #451a03;
   line-height: 1.2;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 
   display: -webkit-box;
@@ -257,25 +258,26 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
-  min-width: 160px;
-  height: 42px;
-  border-radius: 21px;
+  padding: 0 24px;
+  min-width: 170px;
+  height: 46px;
+  border-radius: 14px;
   border: none;
   cursor: pointer;
 
-  background: #d41872;
-  background: -webkit-linear-gradient(left, #a445b2, #d41872, #fa4299);
-  background: -o-linear-gradient(left, #a445b2, #d41872, #fa4299);
-  background: -moz-linear-gradient(left, #a445b2, #d41872, #fa4299);
-  background: linear-gradient(to right, #a445b2, #d41872, #fa4299);
+  background: linear-gradient(180deg, #fde68a 0%, #fcd34d 45%, #f59e0b 100%);
   position: relative;
   z-index: 1;
 
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35),
+              0 0 0 1px rgba(251, 191, 36, 0.6),
+              0 4px 0 #b45309,
+              0 10px 15px -3px rgba(0, 0, 0, 0.35);
+
+  -webkit-transition: all 0.15s ease-in-out;
+  -o-transition: all 0.15s ease-in-out;
+  -moz-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
 }
 
 .login100-form-btn::before {
@@ -283,31 +285,43 @@
   display: block;
   position: absolute;
   z-index: -1;
-  width: 100%;
-  height: 100%;
-  border-radius: 21px;
-  background-color: #555555;
-  top: 0;
-  left: 0;
-  opacity: 0;
+  inset: -3px;
+  border-radius: 17px;
+  background: rgba(245, 158, 11, 0.45);
+  filter: blur(8px);
+  opacity: 0.5;
 
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
+  -webkit-transition: opacity 0.3s ease;
+  -o-transition: opacity 0.3s ease;
+  -moz-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .login100-form-btn:hover {
-  background-color: transparent;
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.65),
+              0 0 0 1px rgba(251, 191, 36, 0.75),
+              0 4px 0 #b45309,
+              0 12px 18px -3px rgba(0, 0, 0, 0.45);
 }
 
 .login100-form-btn:hover::before {
-  opacity: 1;
+  opacity: 0.85;
+}
+
+.login100-form-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.4),
+              0 0 0 1px rgba(251, 191, 36, 0.6),
+              0 2px 0 #b45309,
+              0 5px 8px -2px rgba(0, 0, 0, 0.3);
 }
 
 .login100-form-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.65;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.4), 0 2px 0 #b45309;
 }
 
 /*------------------------------------------------------------------
@@ -366,25 +380,35 @@
 }
 
 .demo-btn {
-  font-family: 'Ubuntu-Regular', sans-serif;
+  font-family: 'Ubuntu-Bold', sans-serif;
   font-size: 11px;
-  padding: 4px 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 5px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  transition: all 0.15s ease;
 }
 
 .demo-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 2px 0 rgba(0, 0, 0, 0.25);
   color: #ffffff;
+}
+
+.demo-btn:active {
+  transform: translateY(1.5px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.25);
 }
 
 .demo-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* Alert Notification Banner */

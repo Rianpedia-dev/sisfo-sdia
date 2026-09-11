@@ -148,51 +148,50 @@
 
 .register-btn {
   border: none;
-  width: 164px;
-  height: 51px;
+  min-width: 170px;
+  height: 48px;
   margin: auto;
   margin-top: 25px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  background: #333;
+  padding: 0 24px;
+  background: linear-gradient(180deg, #fde68a 0%, #fcd34d 45%, #f59e0b 100%);
   font-size: 15px;
   font-family: "Poppins-SemiBold", sans-serif;
-  font-weight: 600;
-  color: #fff;
-  border-radius: 5px;
-  vertical-align: middle;
-  -webkit-transform: perspective(1px) translateZ(0);
-  transform: perspective(1px) translateZ(0);
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
+  font-weight: 700;
+  color: #451a03;
+  border-radius: 14px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35),
+              0 0 0 1px rgba(251, 191, 36, 0.6),
+              0 4px 0 #b45309,
+              0 10px 15px -3px rgba(0, 0, 0, 0.35);
+  transition: all 0.15s ease-in-out;
 }
 
-.register-btn i {
-  margin-left: 10px;
-  font-size: 18px;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
+.register-btn:hover {
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.65),
+              0 0 0 1px rgba(251, 191, 36, 0.75),
+              0 4px 0 #b45309,
+              0 12px 18px -3px rgba(0, 0, 0, 0.45);
 }
 
-.register-btn:hover i,
-.register-btn:focus i,
-.register-btn:active i {
-  -webkit-animation-name: hvr-icon-wobble-horizontal;
-  animation-name: hvr-icon-wobble-horizontal;
-  -webkit-animation-duration: 1s;
-  animation-duration: 1s;
-  -webkit-animation-timing-function: ease-in-out;
-  animation-timing-function: ease-in-out;
-  -webkit-animation-iteration-count: 1;
-  animation-iteration-count: 1;
+.register-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.4),
+              0 0 0 1px rgba(251, 191, 36, 0.6),
+              0 2px 0 #b45309,
+              0 5px 8px -2px rgba(0, 0, 0, 0.3);
 }
 
 .register-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.4), 0 2px 0 #b45309;
 }
 
 @keyframes hvr-icon-wobble-horizontal {

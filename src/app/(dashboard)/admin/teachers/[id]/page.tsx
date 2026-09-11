@@ -132,7 +132,7 @@ export default async function AdminTeacherDetailPage(props: {
             </div>
 
             <div className="flex justify-end pt-3">
-              <Button type="submit" className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Button type="submit" size="lg">
                 <Save className="h-4 w-4" /> Simpan Data Guru
               </Button>
             </div>

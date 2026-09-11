@@ -261,7 +261,7 @@ export default async function SiswaDashboardPage() {
             </div>
           </div>
           <Link href="/siswa/prayers" className="w-full sm:w-auto shrink-0">
-            <Button className="w-full sm:w-auto gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold h-10 px-5 shadow-sm cursor-pointer">
+            <Button variant="launch" size="lg" className="w-full sm:w-auto">
               {completedPrayers === 6 ? "Lihat Catatan Sholat" : "Buka Checklist Sholat"}
             </Button>
           </Link>

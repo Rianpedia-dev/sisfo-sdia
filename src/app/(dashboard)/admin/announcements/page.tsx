@@ -101,7 +101,7 @@ export default async function AdminCreateAnnouncementPage() {
             </div>
 
             <div className="flex justify-end pt-2">
-              <Button type="submit" className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Button type="submit" size="lg">
                 <Send className="h-4 w-4" /> Terbitkan Pengumuman
               </Button>
             </div>

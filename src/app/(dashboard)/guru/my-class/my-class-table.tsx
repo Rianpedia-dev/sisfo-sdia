@@ -491,7 +491,7 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
             <Button variant="outline" onClick={() => setOpenEnrollModal(false)} disabled={isSubmitting}>
               Batal
             </Button>
-            <Button onClick={handleEnroll} disabled={isSubmitting || !selectedStudentToEnroll} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Button onClick={handleEnroll} disabled={isSubmitting || !selectedStudentToEnroll}>
               {isSubmitting ? "Mendaftarkan..." : "Daftarkan Siswa"}
             </Button>
           </DialogFooter>

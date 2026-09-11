@@ -195,7 +195,7 @@ export default async function GuruStudentDetailPage(props: {
                   rows={5}
                 />
                 <div className="flex justify-end">
-                  <Button type="submit" className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white">
+                  <Button type="submit">
                     <Save className="h-4 w-4" /> Simpan Catatan
                   </Button>
                 </div>
@@ -237,7 +237,7 @@ export default async function GuruStudentDetailPage(props: {
                 </div>
 
                 <div className="flex justify-end pt-1">
-                  <Button type="submit" size="sm" className="gap-1 bg-emerald-600 hover:bg-emerald-700 text-white">
+                  <Button type="submit" size="sm">
                     <Plus className="h-4 w-4" /> Catat Keterlambatan
                   </Button>
                 </div>
@@ -335,7 +335,7 @@ export default async function GuruStudentDetailPage(props: {
                 </div>
 
                 <div className="flex justify-end pt-1">
-                  <Button type="submit" size="sm" className="gap-1 bg-rose-600 hover:bg-rose-700 text-white">
+                  <Button type="submit" size="sm" variant="destructive">
                     <Plus className="h-4 w-4" /> Catat Pelanggaran
                   </Button>
                 </div>

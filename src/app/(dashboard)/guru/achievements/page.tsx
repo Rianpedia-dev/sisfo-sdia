@@ -118,7 +118,7 @@ export default async function GuruAchievementsPage() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 text-white mt-2 gap-1.5">
+                <Button type="submit" variant="launch" size="lg" className="w-full mt-2">
                   <Plus className="h-4 w-4" /> Simpan Prestasi Siswa
                 </Button>
               </form>

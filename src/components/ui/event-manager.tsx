@@ -452,7 +452,8 @@ export function EventManager({
 
           <Button
             onClick={() => openCreateDialog()}
-            className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+            size="lg"
+            className="w-full sm:w-auto"
           >
             <Plus className="mr-2 h-4 w-4" />
             Agenda Baru
@@ -1009,7 +1010,6 @@ export function EventManager({
             </Button>
             <Button
               onClick={isCreating ? handleCreateEvent : handleUpdateEvent}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
             >
               {isCreating ? "Tambah Agenda" : "Simpan Perubahan"}
             </Button>

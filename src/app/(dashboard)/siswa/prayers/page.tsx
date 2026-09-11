@@ -166,7 +166,7 @@ export default async function SiswaPrayersPage() {
             </div>
 
             <div className="flex justify-end pt-4 border-t">
-              <Button type="submit" className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto h-11 px-6 text-sm font-semibold cursor-pointer shadow-md">
+              <Button type="submit" size="lg" className="w-full sm:w-auto">
                 <Save className="h-4 w-4" /> Simpan Catatan Sholat
               </Button>
             </div>

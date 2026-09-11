@@ -273,7 +273,7 @@ export function TeacherTable({ initialTeachers }: { initialTeachers: UserItem[] 
             <Button variant="outline" onClick={() => setVerifyTarget(null)} disabled={isSubmitting}>
               Batal
             </Button>
-            <Button onClick={handleConfirmVerify} disabled={isSubmitting} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Button onClick={handleConfirmVerify} disabled={isSubmitting}>
               {isSubmitting ? "Menyimpan..." : "Verifikasi Akun"}
             </Button>
           </DialogFooter>

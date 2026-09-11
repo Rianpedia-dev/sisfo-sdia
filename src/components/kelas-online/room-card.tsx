@@ -152,19 +152,21 @@ export function RoomCard({
               <Button
                 onClick={onJoin}
                 disabled={isLoading}
-                className="flex-1 h-12 text-sm sm:text-base font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md shadow-emerald-600/20 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2"
+                variant={role === "siswa" ? "launch" : "default"}
+                size="xl"
+                className="flex-1"
               >
                 {role === "siswa" ? (
                   <>
-                    <Sparkles className="h-4 w-4 text-amber-300 fill-amber-300" />
+                    <Sparkles className="h-5 w-5 text-amber-950 fill-amber-950/20" />
                     <span>Mulai Belajar Sekarang</span>
-                    <ArrowRight className="h-4 w-4 ml-1" />
+                    <ArrowRight className="h-5 w-5 ml-1" />
                   </>
                 ) : (
                   <>
-                    <Video className="h-4 w-4" />
+                    <Video className="h-5 w-5" />
                     <span>Masuk ke Ruang Kelas</span>
-                    <ArrowRight className="h-4 w-4 ml-1" />
+                    <ArrowRight className="h-5 w-5 ml-1" />
                   </>
                 )}
               </Button>
@@ -175,7 +177,8 @@ export function RoomCard({
                 onClick={onEnd}
                 disabled={isLoading}
                 variant="destructive"
-                className="h-12 px-4 rounded-xl font-semibold cursor-pointer shrink-0"
+                size="xl"
+                className="px-5 shrink-0"
               >
                 Akhiri
               </Button>

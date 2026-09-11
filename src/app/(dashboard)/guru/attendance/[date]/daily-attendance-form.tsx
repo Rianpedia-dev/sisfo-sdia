@@ -177,7 +177,7 @@ export function DailyAttendanceForm({
             </p>
             <div>
               <Link href="/guru/my-class">
-                <Button size="sm" className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer">
+                <Button size="sm" className="mt-2">
                   Buka Kelola Kelas
                 </Button>
               </Link>
@@ -264,7 +264,8 @@ export function DailyAttendanceForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white min-w-[130px] sm:min-w-[150px] text-xs sm:text-sm font-semibold h-10 cursor-pointer shadow-md"
+            size="lg"
+            className="min-w-[130px] sm:min-w-[150px]"
           >
             <Save className="h-4 w-4" />
             {isSubmitting ? "Menyimpan..." : "Simpan Presensi"}

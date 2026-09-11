@@ -396,7 +396,7 @@ export function StudentTable({ initialStudents, classList }: StudentTableProps) 
               <Button type="button" variant="outline" onClick={() => setOpenAddModal(false)} disabled={isSubmitting}>
                 Batal
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Menyimpan..." : "Simpan Siswa"}
               </Button>
             </DialogFooter>
@@ -432,7 +432,7 @@ export function StudentTable({ initialStudents, classList }: StudentTableProps) 
               <Button type="button" variant="outline" onClick={() => setOpenImportModal(false)} disabled={isSubmitting}>
                 Batal
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Mengimpor..." : "Mulai Import"}
               </Button>
             </DialogFooter>
