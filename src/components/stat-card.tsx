@@ -19,31 +19,31 @@ export function StatCard({
 }: StatCardProps) {
   const variantStyles = {
     emerald: {
-      card: "border-emerald-200/60 dark:border-emerald-900/50 bg-gradient-to-br from-emerald-500/10 via-background to-background",
-      iconBg: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
+      card: "border-emerald-500/30 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-500/15 via-card/90 to-card/75",
+      iconBg: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/30",
     },
     blue: {
-      card: "border-sky-200/60 dark:border-sky-900/50 bg-gradient-to-br from-sky-500/10 via-background to-background",
-      iconBg: "bg-sky-500/15 text-sky-700 dark:text-sky-400",
+      card: "border-sky-500/30 dark:border-sky-500/20 bg-gradient-to-br from-sky-500/15 via-card/90 to-card/75",
+      iconBg: "bg-sky-500/20 text-sky-700 dark:text-sky-300 ring-1 ring-sky-500/30",
     },
     amber: {
-      card: "border-amber-200/60 dark:border-amber-900/50 bg-gradient-to-br from-amber-500/10 via-background to-background",
-      iconBg: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+      card: "border-amber-500/30 dark:border-amber-500/20 bg-gradient-to-br from-amber-500/15 via-card/90 to-card/75",
+      iconBg: "bg-amber-500/20 text-amber-700 dark:text-amber-300 ring-1 ring-amber-500/30",
     },
     rose: {
-      card: "border-rose-200/60 dark:border-rose-900/50 bg-gradient-to-br from-rose-500/10 via-background to-background",
-      iconBg: "bg-rose-500/15 text-rose-700 dark:text-rose-400",
+      card: "border-rose-500/30 dark:border-rose-500/20 bg-gradient-to-br from-rose-500/15 via-card/90 to-card/75",
+      iconBg: "bg-rose-500/20 text-rose-700 dark:text-rose-300 ring-1 ring-rose-500/30",
     },
     purple: {
-      card: "border-purple-200/60 dark:border-purple-900/50 bg-gradient-to-br from-purple-500/10 via-background to-background",
-      iconBg: "bg-purple-500/15 text-purple-700 dark:text-purple-400",
+      card: "border-purple-500/30 dark:border-purple-500/20 bg-gradient-to-br from-purple-500/15 via-card/90 to-card/75",
+      iconBg: "bg-purple-500/20 text-purple-700 dark:text-purple-300 ring-1 ring-purple-500/30",
     },
   };
 
   const current = variantStyles[variant];
 
   return (
-    <Card className={cn("overflow-hidden shadow-sm transition-all hover:shadow-md", current.card)}>
+    <Card className={cn("overflow-hidden py-0 gap-0 transition-all duration-300 hover:scale-[1.015]", current.card)}>
       <CardContent className="p-3.5 sm:p-5">
         <div className="flex items-center justify-between gap-2">
           <div className="space-y-0.5 sm:space-y-1 min-w-0">

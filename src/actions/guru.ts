@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getSession, setSessionCookie } from "@/lib/auth";
 import { saveUploadedFile } from "@/lib/upload";
 
 async function checkGuruOrAdmin() {
@@ -289,6 +289,25 @@ export async function createBestStudentAction(formData: FormData) {
     foto = rawFile.trim();
   }
 
+  // Jika foto tidak diunggah, gunakan foto profil siswa yang sudah ada
+  if (!foto && name) {
+    try {
+      const studentUser = await prisma.user.findFirst({
+        where: {
+          name,
+          ...(kelas ? { kelas } : {}),
+          status: "1",
+        },
+        select: { image: true },
+      });
+      if (studentUser?.image) {
+        foto = studentUser.image;
+      }
+    } catch (err) {
+      console.error("Gagal mengambil foto profil siswa:", err);
+    }
+  }
+
   await prisma.bestStudent.create({
     data: {
       name,
@@ -413,6 +432,7 @@ export async function updateProfileAction(formData: FormData) {
   const guru_bidang = formData.get("guru_bidang") as string;
   const notes = formData.get("notes") as string;
   const skills = formData.get("skills") as string;
+  const removeImage = formData.get("remove_image") === "true";
 
   const dataToUpdate: Record<string, unknown> = {};
   if (name) dataToUpdate.name = name;
@@ -422,24 +442,56 @@ export async function updateProfileAction(formData: FormData) {
   if (notes !== undefined) dataToUpdate.notes = notes || null;
   if (skills !== undefined) dataToUpdate.skills = skills || null;
 
-  const rawFile = formData.get("image") || formData.get("photo");
-  if (rawFile && typeof rawFile === "object" && "size" in rawFile && (rawFile as Blob).size > 0) {
-    const uploadRes = await saveUploadedFile(rawFile as Blob, { category: "avatar" });
-    if (uploadRes.success && uploadRes.filePath) {
-      dataToUpdate.image = uploadRes.filePath;
+  if (removeImage) {
+    dataToUpdate.image = null;
+  } else {
+    const rawFile = formData.get("image") || formData.get("photo");
+    if (rawFile && typeof rawFile === "object" && "size" in rawFile && (rawFile as Blob).size > 0) {
+      const uploadRes = await saveUploadedFile(rawFile as Blob, { category: "avatar" });
+      if (!uploadRes.success) {
+        return { success: false, error: uploadRes.error || "Gagal mengunggah foto profil." };
+      }
+      if (uploadRes.filePath) {
+        dataToUpdate.image = uploadRes.filePath;
+      }
     }
   }
 
-  await prisma.user.update({
-    where: { id: BigInt(session.id) },
-    data: dataToUpdate,
+  const isNum = /^\d+$/.test(session.id);
+  if (isNum) {
+    await prisma.user.update({
+      where: { id: BigInt(session.id) },
+      data: dataToUpdate,
+    });
+  }
+
+  const newImage = dataToUpdate.image !== undefined ? (dataToUpdate.image as string | null) : session.image;
+  const newName = dataToUpdate.name ? (dataToUpdate.name as string) : session.name;
+  const newKelas = dataToUpdate.kelas !== undefined ? (dataToUpdate.kelas as string | null) : session.kelas;
+
+  // Sync wali_kelas in tbl_kelas jika guru membina kelas ini
+  if (newKelas) {
+    try {
+      await prisma.kelas.updateMany({
+        where: { nama_kelas: newKelas },
+        data: { wali_kelas: newName },
+      });
+    } catch (err) {
+      console.error("Gagal sinkronisasi wali_kelas ke tbl_kelas:", err);
+    }
+  }
+
+  await setSessionCookie({
+    ...session,
+    name: newName,
+    image: newImage,
+    kelas: newKelas,
   });
 
+  revalidatePath("/", "layout");
   revalidatePath("/guru/profile");
-  revalidatePath("/siswa/profile");
   revalidatePath("/guru");
-  revalidatePath("/siswa");
-  return { success: true, message: "Profil berhasil diperbarui." };
+  return { success: true, message: "Profil berhasil diperbarui.", image: newImage };
 }
 
 export const updateGuruProfile = updateProfileAction;
@@ -452,21 +504,30 @@ export async function uploadPhotoAction(formData: FormData) {
 
   const rawFile = formData.get("image") || formData.get("photo") || formData.get("file");
   if (!rawFile || typeof rawFile !== "object" || !("size" in rawFile) || (rawFile as Blob).size === 0) {
-    return { error: "Silakan pilih file foto terlebih dahulu." };
+    return { success: false, error: "Silakan pilih file foto terlebih dahulu." };
   }
 
   const uploadRes = await saveUploadedFile(rawFile as Blob, { category: "avatar" });
   if (!uploadRes.success) {
-    return { error: uploadRes.error };
+    return { success: false, error: uploadRes.error };
   }
 
-  await prisma.user.update({
-    where: { id: BigInt(session.id) },
-    data: { image: uploadRes.filePath },
+  const isNum = /^\d+$/.test(session.id);
+  if (isNum) {
+    await prisma.user.update({
+      where: { id: BigInt(session.id) },
+      data: { image: uploadRes.filePath },
+    });
+  }
+
+  await setSessionCookie({
+    ...session,
+    image: uploadRes.filePath,
   });
 
+  revalidatePath("/", "layout");
   revalidatePath("/guru/profile");
-  revalidatePath("/siswa/profile");
+  revalidatePath("/guru");
   return { success: true, filePath: uploadRes.filePath, message: "Foto profil berhasil diperbarui." };
 }
 

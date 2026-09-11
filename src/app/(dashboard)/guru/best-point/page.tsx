@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Trophy, Medal, Award, Crown } from "lucide-react";
+import { Trophy, Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { LeaderboardPodium } from "@/components/ui/leaderboard-podium";
 import {
   Table,
   TableBody,
@@ -53,43 +53,32 @@ export default async function GuruBestPointPage() {
       </div>
 
       {/* Top 3 Podium Highlights */}
-      {sortedStudents.length >= 3 && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-          {/* Juara 2 */}
-          <Card className="border-slate-300 shadow-sm bg-gradient-to-br from-slate-100 via-background to-background dark:from-slate-900 sm:order-1 order-2">
-            <CardContent className="p-5 text-center flex flex-col items-center">
-              <Medal className="h-8 w-8 text-slate-400 mb-2" />
-              <Badge variant="outline" className="text-xs mb-1">Juara 2</Badge>
-              <h3 className="font-bold text-sm truncate w-full">{sortedStudents[1].name}</h3>
-              <p className="font-mono text-xl font-extrabold text-slate-700 dark:text-slate-300 mt-2">
-                {sortedStudents[1].point || 0} <span className="text-xs font-normal">Poin</span>
-              </p>
-            </CardContent>
-          </Card>
+      {sortedStudents.length > 0 && (
+        <div className="py-4 sm:py-6">
+          <div className="text-center mb-6 sm:mb-8 space-y-1">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 mb-1">
+              <Crown className="h-5 w-5" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Podium Peringkat Teratas</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Siswa teladan dengan perolehan poin keaktifan tertinggi kelas {guruClass}
+            </p>
+          </div>
 
-          {/* Juara 1 */}
-          <Card className="border-amber-400 shadow-md bg-gradient-to-br from-amber-500/15 via-background to-background sm:order-2 order-1 ring-2 ring-amber-400/30">
-            <CardContent className="p-6 text-center flex flex-col items-center">
-              <Crown className="h-10 w-10 text-amber-500 mb-2" />
-              <Badge className="bg-amber-500 text-white text-xs mb-1">Juara 1</Badge>
-              <h3 className="font-bold text-base truncate w-full">{sortedStudents[0].name}</h3>
-              <p className="font-mono text-2xl font-black text-amber-600 dark:text-amber-400 mt-2">
-                {sortedStudents[0].point || 0} <span className="text-xs font-normal">Poin</span>
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Juara 3 */}
-          <Card className="border-amber-700/30 shadow-sm bg-gradient-to-br from-amber-800/10 via-background to-background sm:order-3 order-3">
-            <CardContent className="p-5 text-center flex flex-col items-center">
-              <Award className="h-8 w-8 text-amber-700 mb-2" />
-              <Badge variant="outline" className="text-xs mb-1">Juara 3</Badge>
-              <h3 className="font-bold text-sm truncate w-full">{sortedStudents[2].name}</h3>
-              <p className="font-mono text-xl font-extrabold text-amber-800 dark:text-amber-500 mt-2">
-                {sortedStudents[2].point || 0} <span className="text-xs font-normal">Poin</span>
-              </p>
-            </CardContent>
-          </Card>
+          <div className="flex justify-center px-2">
+            <LeaderboardPodium
+              rankings={sortedStudents.slice(0, 3).map((s, idx) => ({
+                userId: s.id.toString(),
+                userName: s.name,
+                rank: idx + 1,
+                value: parseInt(s.point || "0", 10) || 0,
+                avatarUrl: s.image || undefined,
+              }))}
+              size="lg"
+              medalStyle="modern"
+              valueSuffix="Poin"
+            />
+          </div>
         </div>
       )}
 

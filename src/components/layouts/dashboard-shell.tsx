@@ -14,6 +14,7 @@ interface DashboardShellProps {
   userName: string;
   userEmail: string;
   kelas?: string | null;
+  userImage?: string | null;
   children: React.ReactNode;
 }
 
@@ -22,6 +23,7 @@ function DashboardLayoutContent({
   userName,
   userEmail,
   kelas,
+  userImage,
   children,
 }: DashboardShellProps) {
   const { isCollapsed } = useSidebar();
@@ -57,6 +59,7 @@ function DashboardLayoutContent({
           userName={userName}
           userEmail={userEmail}
           kelas={kelas}
+          userImage={userImage}
         />
         <main className="flex-1 p-3.5 sm:p-5 md:p-6 lg:p-8 pb-8 w-full max-w-7xl mx-auto min-w-0">
           {children}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, Maximize2, Minimize2, Bell, User, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,22 +14,29 @@ interface NavbarProps {
   userName: string;
   userEmail: string;
   kelas?: string | null;
+  userImage?: string | null;
 }
 
-export function Navbar({ role, userName, userEmail, kelas }: NavbarProps) {
+export function Navbar({ role, userName, userEmail, kelas, userImage }: NavbarProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [openMobile, setOpenMobile] = useState(false);
   const { isCollapsed, toggleSidebar } = useSidebar();
   const academic = getAcademicYear();
 
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
-      setIsFullscreen(true);
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen().catch(() => {});
-        setIsFullscreen(false);
       }
     }
   };
@@ -119,8 +126,23 @@ export function Navbar({ role, userName, userEmail, kelas }: NavbarProps) {
               {getRoleLabel(role === "admin" ? "3" : role === "guru" ? "4" : "1")}
             </p>
           </div>
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 ring-2 ring-emerald-600/20 dark:bg-emerald-900/50 dark:text-emerald-200">
-            <User className="h-4 w-4" />
+          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 ring-2 ring-emerald-600/20 dark:bg-emerald-900/50 dark:text-emerald-200 overflow-hidden font-bold text-xs">
+            {userImage ? (
+              <>
+                <span>{userName ? userName.substring(0, 2).toUpperCase() : <User className="h-4 w-4" />}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={userImage}
+                  alt={userName}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
+                />
+              </>
+            ) : (
+              userName ? userName.substring(0, 2).toUpperCase() : <User className="h-4 w-4" />
+            )}
           </div>
         </div>
       </div>

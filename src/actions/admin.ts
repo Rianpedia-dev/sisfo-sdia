@@ -220,6 +220,33 @@ export async function createClassAction(formData: FormData) {
   return { success: true, message: "Kelas berhasil ditambahkan." };
 }
 
+export async function updateClassAction(id: string, formData: FormData) {
+  await checkAdmin();
+
+  const nama_kelas = formData.get("nama_kelas") as string;
+  const wali_kelas = formData.get("wali_kelas") as string;
+  const jumlah_siswa = formData.get("jumlah_siswa") as string;
+  const code_restrict = formData.get("code_restrict") as string;
+
+  if (!nama_kelas) {
+    return { error: "Nama kelas wajib diisi." };
+  }
+
+  await prisma.kelas.update({
+    where: { id: BigInt(id) },
+    data: {
+      nama_kelas,
+      wali_kelas: wali_kelas || null,
+      jumlah_siswa: jumlah_siswa || null,
+      code_restrict: code_restrict || null,
+    },
+  });
+
+  revalidatePath("/admin/classes");
+  revalidatePath(`/admin/classes/${id}`);
+  return { success: true, message: "Data kelas dan wali kelas berhasil diperbarui." };
+}
+
 export async function deleteClassAction(id: string) {
   await checkAdmin();
 

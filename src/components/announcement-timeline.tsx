@@ -77,7 +77,7 @@ export function AnnouncementTimeline({
 
   if (!items || items.length === 0) {
     return (
-      <Card className="border-dashed">
+      <Card className="border-dashed py-0 gap-0">
         <CardContent className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
           <Megaphone className="h-10 w-10 text-muted-foreground/40 mb-3" />
           <p className="font-medium">Belum ada pengumuman.</p>
@@ -90,7 +90,7 @@ export function AnnouncementTimeline({
   return (
     <div className="space-y-4">
       {items.map((item) => (
-        <Card key={item.id} className="relative overflow-hidden border-l-4 border-l-emerald-600 transition-all hover:shadow-md">
+        <Card key={item.id} className="relative overflow-hidden py-0 gap-0 border-l-4 border-l-emerald-600 transition-all duration-300 hover:scale-[1.005]">
           <CardContent className="p-5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">

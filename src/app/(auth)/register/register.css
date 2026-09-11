@@ -1,0 +1,260 @@
+/*==================================================================
+  REGISTRATION STYLESHEET (SISFO AL-AZHAR 1:1 REPLICA)
+==================================================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css');
+
+@font-face {
+  font-family: "Poppins-Regular";
+  src: url("/fonts/poppins/Poppins-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Poppins-SemiBold";
+  src: url("/fonts/poppins/Poppins-SemiBold.ttf") format("truetype");
+}
+
+.register-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 15px;
+  font-family: "Poppins-Regular", sans-serif;
+  color: #333;
+}
+
+.register-wrapper::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.497);
+}
+
+.register-inner {
+  padding: 20px;
+  background: #fff;
+  max-width: 850px;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  opacity: 0.95;
+  border-radius: 15px;
+  z-index: 5;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.register-inner .image-holder {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.register-inner .image-holder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+}
+
+.register-inner form {
+  width: 50%;
+  padding-top: 36px;
+  padding-left: 45px;
+  padding-right: 45px;
+  display: flex;
+  flex-direction: column;
+}
+
+.register-inner h3 {
+  text-transform: uppercase;
+  font-size: 25px;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 28px;
+  color: #333;
+}
+
+.register-form-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.register-form-wrapper i {
+  position: absolute;
+  bottom: 9px;
+  right: 0;
+  color: #333;
+  pointer-events: none;
+}
+
+.register-form-control {
+  border: 1px solid #333;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  display: block;
+  width: 100%;
+  height: 30px;
+  padding: 0;
+  margin-bottom: 25px;
+  font-family: "Poppins-Regular", sans-serif;
+  color: #333;
+  font-size: 13px;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.register-form-control::placeholder {
+  font-size: 13px;
+  color: #333;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+.register-form-control:focus {
+  border-bottom-color: #000;
+  outline: none;
+}
+
+.register-select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  padding-left: 0;
+}
+
+.register-select option[value=""][disabled] {
+  display: none;
+}
+
+.register-btn {
+  border: none;
+  width: 164px;
+  height: 51px;
+  margin: auto;
+  margin-top: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #333;
+  font-size: 15px;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 5px;
+  vertical-align: middle;
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+
+.register-btn i {
+  margin-left: 10px;
+  font-size: 18px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+.register-btn:hover i,
+.register-btn:focus i,
+.register-btn:active i {
+  -webkit-animation-name: hvr-icon-wobble-horizontal;
+  animation-name: hvr-icon-wobble-horizontal;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+  -webkit-animation-iteration-count: 1;
+  animation-iteration-count: 1;
+}
+
+.register-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes hvr-icon-wobble-horizontal {
+  16.65% { transform: translateX(6px); }
+  33.3% { transform: translateX(-5px); }
+  49.95% { transform: translateX(4px); }
+  66.6% { transform: translateX(-2px); }
+  83.25% { transform: translateX(1px); }
+  100% { transform: translateX(0); }
+}
+
+.register-back-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 12px;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+.register-back-link a {
+  color: #555;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.register-back-link a:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+.register-error-banner {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-bottom: 15px;
+  font-family: "Poppins-Regular", sans-serif;
+  text-align: center;
+}
+
+@media (max-width: 991px) {
+  .register-inner form {
+    padding-top: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+}
+
+@media (max-width: 767px) {
+  .register-inner {
+    display: block;
+  }
+  .register-inner .image-holder {
+    width: 100%;
+    max-height: 220px;
+  }
+  .register-inner form {
+    width: 100%;
+    padding: 30px 10px 20px;
+  }
+  .register-btn {
+    margin-top: 30px;
+  }
+}

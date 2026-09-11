@@ -108,12 +108,12 @@ export default async function GuruAchievementsPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="foto_upload">Upload Foto Piagam / Siswa (Maks 2MB - JPG/PNG)</Label>
+                  <Label htmlFor="foto_upload">Upload Foto Piagam / Siswa (Maks 5MB - Gambar/Foto)</Label>
                   <Input
                     id="foto_upload"
                     name="foto_upload"
                     type="file"
-                    accept=".jpg,.jpeg,.png,.webp"
+                    accept="image/*,.jpg,.jpeg,.png,.webp,.avif"
                     className="cursor-pointer file:text-amber-700 file:font-semibold"
                   />
                 </div>

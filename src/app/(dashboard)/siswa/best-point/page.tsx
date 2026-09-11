@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Trophy, Crown, Medal, Award, User } from "lucide-react";
+import { Trophy, Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { LeaderboardPodium } from "@/components/ui/leaderboard-podium";
 import {
   Table,
   TableBody,
@@ -40,9 +41,6 @@ export default async function SiswaBestPointPage() {
     (a, b) => (parseInt(b.point || "0", 10) || 0) - (parseInt(a.point || "0", 10) || 0)
   );
 
-  const myRank = sorted.findIndex((s) => s.id.toString() === session.id) + 1;
-  const myData = sorted.find((s) => s.id.toString() === session.id);
-
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
@@ -55,30 +53,35 @@ export default async function SiswaBestPointPage() {
         </p>
       </div>
 
-      {/* My Rank Card Highlight */}
-      <Card className="border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 via-background to-background shadow-md">
-        <CardContent className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white font-black text-xl shadow-md shadow-emerald-950/20">
-              #{myRank || "-"}
+      {/* Top 3 Podium Highlights */}
+      {sorted.length > 0 && (
+        <div className="py-4 sm:py-6">
+          <div className="text-center mb-6 sm:mb-8 space-y-1">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 mb-1">
+              <Crown className="h-5 w-5" />
             </div>
-            <div>
-              <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">Peringkat Anda Saat Ini</p>
-              <h2 className="text-xl font-bold text-foreground">{session.name}</h2>
-              <p className="text-xs text-muted-foreground">Kelas {studentClass}</p>
-            </div>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Podium Peringkat Teratas</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              3 siswa peraih poin keaktifan tertinggi di kelas {studentClass}
+            </p>
           </div>
 
-          <div className="flex items-center gap-3 self-end sm:self-auto">
-            <div className="text-right">
-              <p className="text-xs text-muted-foreground">Akumulasi Poin</p>
-              <p className="font-mono text-2xl font-black text-amber-600 dark:text-amber-400">
-                {myData?.point || "0"} <span className="text-xs font-normal">Poin</span>
-              </p>
-            </div>
+          <div className="flex justify-center px-2">
+            <LeaderboardPodium
+              rankings={sorted.slice(0, 3).map((s, idx) => ({
+                userId: s.id.toString(),
+                userName: s.name,
+                rank: idx + 1,
+                value: parseInt(s.point || "0", 10) || 0,
+                avatarUrl: s.image || undefined,
+              }))}
+              size="lg"
+              medalStyle="modern"
+              valueSuffix="Poin"
+            />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      )}
 
       {/* Leaderboard Table */}
       <Card className="shadow-sm">

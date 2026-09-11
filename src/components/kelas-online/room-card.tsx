@@ -70,10 +70,10 @@ export function RoomCard({
 
   return (
     <Card
-      className={`relative overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-lg ${
+      className={`relative overflow-hidden rounded-2xl py-0 gap-0 transition-all duration-300 hover:scale-[1.01] ${
         isActive
-          ? "border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/50 shadow-md shadow-emerald-500/10 dark:from-emerald-950/40 dark:via-slate-900 dark:to-teal-950/20 dark:border-emerald-700/60"
-          : "border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/60"
+          ? "border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-50/90 via-card/90 to-teal-50/50 shadow-liquid-glass dark:from-emerald-950/40 dark:via-slate-900/80 dark:to-teal-950/20 dark:border-emerald-700/60"
+          : "border border-white/20 bg-card/80 dark:border-white/10 dark:bg-slate-900/60"
       }`}
     >
       {isActive && (

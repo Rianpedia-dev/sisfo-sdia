@@ -32,7 +32,7 @@ export async function registerTeacherAction(prevState: unknown, formData: FormDa
     appleid: formData.get("appleid") as string,
     password: formData.get("password") as string,
     passwordappleid: formData.get("passwordappleid") as string,
-    guru_bidang: formData.get("guru_bidang") as string,
+    guru_bidang: ((formData.get("guru_bidang") || formData.get("bidang")) as string) || "",
     gender: formData.get("gender") as "L" | "P",
     nip: (formData.get("nip") as string) || undefined,
     kelas: formData.get("kelas") as string,

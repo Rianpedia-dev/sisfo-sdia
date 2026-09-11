@@ -37,8 +37,34 @@ export default async function GuruBestStudentPage() {
           })
         : [],
     ]);
+
+    const normalizeName = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
+    const photoMap = new Map<string, string | null>();
+    dbStudents.forEach((u) => {
+      if (u.image) {
+        photoMap.set(normalizeName(u.name), u.image);
+      }
+    });
+
+    const missingNames = dbBest
+      .filter((b) => !b.foto && !photoMap.has(normalizeName(b.name)))
+      .map((b) => b.name);
+
+    if (missingNames.length > 0) {
+      const extraUsers = await prisma.user.findMany({
+        where: { name: { in: missingNames }, status: "1" },
+        select: { name: true, image: true },
+      });
+      extraUsers.forEach((u) => {
+        if (u.image) photoMap.set(normalizeName(u.name), u.image);
+      });
+    }
+
     students = dbStudents;
-    bestStudents = dbBest;
+    bestStudents = dbBest.map((bs) => ({
+      ...bs,
+      foto: bs.foto || photoMap.get(normalizeName(bs.name)) || null,
+    }));
   } catch (e) {
     console.error("Database query error in best student:", e);
   }
@@ -103,12 +129,12 @@ export default async function GuruBestStudentPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="foto_upload">Upload Foto Siswa (Maks 2MB - JPG/PNG)</Label>
+                  <Label htmlFor="foto_upload">Upload Foto Siswa (Maks 5MB - Gambar/Foto)</Label>
                   <Input
                     id="foto_upload"
                     name="foto_upload"
                     type="file"
-                    accept=".jpg,.jpeg,.png,.webp"
+                    accept="image/*,.jpg,.jpeg,.png,.webp,.avif"
                     className="cursor-pointer file:text-purple-700 file:font-semibold"
                   />
                 </div>

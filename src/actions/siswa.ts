@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getSession, setSessionCookie } from "@/lib/auth";
 
 import { saveUploadedFile } from "@/lib/upload";
 
@@ -68,6 +68,7 @@ export async function updateStudentProfileAction(formData: FormData) {
   const address = formData.get("address") as string;
   const skills = formData.get("skills") as string;
   const notes = formData.get("notes") as string;
+  const removeImage = formData.get("remove_image") === "true";
 
   const dataToUpdate: Record<string, unknown> = {
     address: address || null,
@@ -75,21 +76,40 @@ export async function updateStudentProfileAction(formData: FormData) {
     notes: notes || null,
   };
 
-  const rawFile = formData.get("image") || formData.get("photo");
-  if (rawFile && typeof rawFile === "object" && "size" in rawFile && (rawFile as Blob).size > 0) {
-    const uploadRes = await saveUploadedFile(rawFile as Blob, { category: "avatar" });
-    if (uploadRes.success && uploadRes.filePath) {
-      dataToUpdate.image = uploadRes.filePath;
+  if (removeImage) {
+    dataToUpdate.image = null;
+  } else {
+    const rawFile = formData.get("image") || formData.get("photo");
+    if (rawFile && typeof rawFile === "object" && "size" in rawFile && (rawFile as Blob).size > 0) {
+      const uploadRes = await saveUploadedFile(rawFile as Blob, { category: "avatar" });
+      if (!uploadRes.success) {
+        return { success: false, error: uploadRes.error || "Gagal mengunggah foto profil." };
+      }
+      if (uploadRes.filePath) {
+        dataToUpdate.image = uploadRes.filePath;
+      }
     }
   }
 
-  await prisma.user.update({
-    where: { id: BigInt(session.id) },
-    data: dataToUpdate,
+  const isNum = /^\d+$/.test(session.id);
+  if (isNum) {
+    await prisma.user.update({
+      where: { id: BigInt(session.id) },
+      data: dataToUpdate,
+    });
+  }
+
+  const newImage = dataToUpdate.image !== undefined ? (dataToUpdate.image as string | null) : session.image;
+
+  await setSessionCookie({
+    ...session,
+    image: newImage,
   });
 
+  revalidatePath("/", "layout");
   revalidatePath("/siswa/profile");
-  return { success: true, message: "Profil berhasil diperbarui." };
+  revalidatePath("/siswa");
+  return { success: true, message: "Profil berhasil diperbarui.", image: newImage };
 }
 
 export const updateProfileAction = updateStudentProfileAction;
@@ -99,20 +119,30 @@ export async function uploadPhotoAction(formData: FormData) {
 
   const rawFile = formData.get("image") || formData.get("photo") || formData.get("file");
   if (!rawFile || typeof rawFile !== "object" || !("size" in rawFile) || (rawFile as Blob).size === 0) {
-    return { error: "Silakan pilih file foto terlebih dahulu." };
+    return { success: false, error: "Silakan pilih file foto terlebih dahulu." };
   }
 
   const uploadRes = await saveUploadedFile(rawFile as Blob, { category: "avatar" });
   if (!uploadRes.success) {
-    return { error: uploadRes.error };
+    return { success: false, error: uploadRes.error };
   }
 
-  await prisma.user.update({
-    where: { id: BigInt(session.id) },
-    data: { image: uploadRes.filePath },
+  const isNum = /^\d+$/.test(session.id);
+  if (isNum) {
+    await prisma.user.update({
+      where: { id: BigInt(session.id) },
+      data: { image: uploadRes.filePath },
+    });
+  }
+
+  await setSessionCookie({
+    ...session,
+    image: uploadRes.filePath,
   });
 
+  revalidatePath("/", "layout");
   revalidatePath("/siswa/profile");
+  revalidatePath("/siswa");
   return { success: true, filePath: uploadRes.filePath, message: "Foto profil berhasil diperbarui." };
 }
 

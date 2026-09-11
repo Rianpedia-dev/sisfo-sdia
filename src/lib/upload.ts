@@ -31,47 +31,71 @@ export async function saveUploadedFile(
 
   const { category } = options;
 
+  // Ekstensi dari file jika ada
+  let originalExt = "";
+  if ("name" in file && typeof file.name === "string" && file.name.includes(".")) {
+    originalExt = path.extname(file.name).toLowerCase();
+  }
+
+  const imageExtensions = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp",
+    ".avif",
+    ".gif",
+    ".bmp",
+    ".svg",
+    ".heic",
+    ".heif",
+    ".ico",
+  ];
+
   // Tentukan batas ukuran dan direktori tujuan
-  let maxBytes = 2 * 1024 * 1024; // Default 2MB
-  let allowedMimeTypes: string[] = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+  let maxBytes = 5 * 1024 * 1024; // Default 5MB
   let subDir = "images";
 
   if (category === "avatar") {
-    maxBytes = 1 * 1024 * 1024; // 1MB per PRD Section 13
-    allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    maxBytes = 5 * 1024 * 1024; // 5MB
     subDir = "images";
   } else if (category === "attachment") {
-    maxBytes = 2 * 1024 * 1024; // 2MB per PRD Section 13
-    allowedMimeTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-      "image/webp",
-    ];
+    maxBytes = 5 * 1024 * 1024; // 5MB
     subDir = "files";
   } else if (category === "achievement" || category === "best_student") {
-    maxBytes = 2 * 1024 * 1024; // 2MB per PRD Section 13
-    allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    maxBytes = 5 * 1024 * 1024; // 5MB
     subDir = "images";
   }
 
   // Validasi ukuran
   if (file.size > maxBytes) {
-    const maxMb = maxBytes / (1024 * 1024);
+    const maxMb = Math.round(maxBytes / (1024 * 1024));
     return {
       success: false,
       error: `Ukuran file melebihi batas maksimum ${maxMb}MB.`,
     };
   }
 
-  // Validasi tipe MIME
+  // Validasi tipe MIME / Ekstensi
   const mimeType = file.type.toLowerCase();
-  if (mimeType && !allowedMimeTypes.includes(mimeType)) {
-    return {
-      success: false,
-      error: `Format file tidak diizinkan. Tipe yang diperbolehkan: ${allowedMimeTypes.join(", ")}.`,
-    };
+  const isImageMime = mimeType.startsWith("image/");
+  const isImageExt = imageExtensions.includes(originalExt);
+
+  if (category === "attachment") {
+    const isPdf = mimeType === "application/pdf" || originalExt === ".pdf";
+    if (!isPdf && !isImageMime && !isImageExt) {
+      return {
+        success: false,
+        error: "Format file tidak diizinkan. Harap upload dokumen PDF atau file gambar (JPG, PNG, WebP, AVIF, dll).",
+      };
+    }
+  } else {
+    // Kategori gambar (avatar, achievement, best_student)
+    if (!isImageMime && !isImageExt) {
+      return {
+        success: false,
+        error: "Format file tidak diizinkan. Harap upload file gambar (PNG, JPG, WebP, AVIF, dsb).",
+      };
+    }
   }
 
   try {
@@ -80,14 +104,20 @@ export async function saveUploadedFile(
 
     // Ambil ekstensi dari nama file asli jika ada, atau tebak dari MIME
     let ext = ".jpg";
-    if ("name" in file && typeof file.name === "string" && file.name.includes(".")) {
-      ext = path.extname(file.name).toLowerCase();
+    if (originalExt) {
+      ext = originalExt;
     } else if (mimeType === "application/pdf") {
       ext = ".pdf";
     } else if (mimeType === "image/png") {
       ext = ".png";
     } else if (mimeType === "image/webp") {
       ext = ".webp";
+    } else if (mimeType === "image/avif") {
+      ext = ".avif";
+    } else if (mimeType === "image/gif") {
+      ext = ".gif";
+    } else if (mimeType === "image/svg+xml") {
+      ext = ".svg";
     }
 
     // Nama file aman dan unik

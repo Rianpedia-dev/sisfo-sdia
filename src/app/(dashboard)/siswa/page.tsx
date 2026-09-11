@@ -37,14 +37,24 @@ export default async function SiswaDashboardPage() {
   let achievements: any[] = [];
   let announcements: any[] = [];
   let prayerToday: any = null;
+  let studentImage: string | null = session.image || null;
+  let studentPoint = (session as any).point || "0";
+  let studentNis = session.nis || "-";
+  let studentName = session.name || "Siswa";
 
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
   try {
     const isNum = /^\d+$/.test(session.id);
-    const [dbKelas, dbVio, dbLate, dbClassmates, dbBest, dbPrestasi, dbAnnounce, dbPrayer] =
+    const [dbUser, dbKelas, dbVio, dbLate, dbClassmates, dbBest, dbPrestasi, dbAnnounce, dbPrayer] =
       await Promise.all([
+        isNum
+          ? prisma.user.findUnique({
+              where: { id: BigInt(session.id) },
+              select: { image: true, point: true, nis: true, name: true },
+            })
+          : null,
         studentClass
           ? prisma.kelas.findFirst({
               where: { nama_kelas: studentClass },
@@ -93,14 +103,31 @@ export default async function SiswaDashboardPage() {
           : null,
       ]);
 
+    const normalizeName = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
+    const photoMap = new Map<string, string | null>();
+    dbClassmates.forEach((u) => {
+      if (u.image) {
+        photoMap.set(normalizeName(u.name), u.image);
+      }
+    });
+
     kelasInfo = dbKelas;
     totalViolations = dbVio;
     totalLateness = dbLate;
     classmates = dbClassmates;
-    bestStudents = dbBest;
+    bestStudents = dbBest.map((bs) => ({
+      ...bs,
+      foto: bs.foto || photoMap.get(normalizeName(bs.name)) || null,
+    }));
     achievements = dbPrestasi;
     announcements = dbAnnounce;
     prayerToday = dbPrayer;
+
+    // Student identity info
+    studentImage = dbUser?.image || session.image || null;
+    studentPoint = dbUser?.point || (session as any).point || "0";
+    studentNis = dbUser?.nis || session.nis || "-";
+    studentName = dbUser?.name || session.name || "Siswa";
   } catch (e) {
     console.error("Database query error in siswa dashboard:", e);
   }
@@ -117,6 +144,24 @@ export default async function SiswaDashboardPage() {
 
   if (!kelasInfo) {
     kelasInfo = { wali_kelas: "-", nama_kelas: studentClass || "Belum ditentukan" };
+  }
+
+  let waliKelas = kelasInfo?.wali_kelas;
+  if ((!waliKelas || waliKelas === "-" || waliKelas === "Belum ditentukan") && studentClass) {
+    try {
+      const teacher = await prisma.user.findFirst({
+        where: {
+          kelas: studentClass,
+          status: { in: ["2", "4"] },
+        },
+        select: { name: true },
+      });
+      if (teacher?.name) {
+        waliKelas = teacher.name;
+      }
+    } catch (e) {
+      console.error("Error fetching teacher wali_kelas fallback:", e);
+    }
   }
 
   // 3. Best point in class
@@ -136,29 +181,58 @@ export default async function SiswaDashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header Info: Kelas + Wali Kelas */}
-      <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-900/60 via-emerald-800/40 to-slate-900/60 p-4 sm:p-6 text-white shadow-lg backdrop-blur-md">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <span className="inline-block rounded-md bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-300 border border-emerald-400/30">
-              Dashboard Siswa SDIA
-            </span>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
-              Assalamu&apos;alaikum, {session.name}
+      {/* Premium Hero Banner Siswa */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-950 p-5 sm:p-7 md:p-8 text-white shadow-xl border border-emerald-500/30">
+        {/* Decorative Ambient Lighting & Glows */}
+        <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-emerald-400/20 blur-3xl pointer-events-none" />
+        <div className="absolute -left-16 -bottom-16 h-64 w-64 rounded-full bg-teal-400/15 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/3 -translate-y-1/2 h-40 w-40 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none" />
+
+        {/* Decorative subtle background pattern */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          {/* Left: Greeting */}
+          <div className="space-y-2 max-w-2xl">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+              Assalamu&apos;alaikum,{" "}
+              <span className="bg-gradient-to-r from-emerald-200 via-teal-100 to-white bg-clip-text text-transparent">
+                {studentName}
+              </span>
             </h1>
-            <p className="text-xs sm:text-sm md:text-base text-emerald-200/90 font-normal">
-              Selamat datang kembali. Jangan lupa lengkapi checklist sholat harian Anda!
+
+            <p className="text-xs sm:text-sm text-emerald-100/85 font-normal leading-relaxed">
+              Selamat datang kembali di portal pembelajaran SD Islam Al-Azhar Cairo Palembang. Semangat belajar dan raih prestasi terbaik hari ini!
             </p>
           </div>
 
-          <div className="flex flex-col sm:items-end gap-1 rounded-xl bg-black/20 p-2.5 sm:p-3 text-xs border border-white/10 shrink-0">
-            <div className="flex items-center gap-1.5 font-semibold text-emerald-200">
-              <School className="h-4 w-4 text-emerald-400" />
-              <span>{studentClass || "Rombel Umum"}</span>
+          {/* Right: Glassmorphic Status Card (Kelas, Wali, Poin, NIS) */}
+          <div className="flex flex-col gap-2 rounded-2xl bg-white/10 hover:bg-white/[0.12] backdrop-blur-md border border-white/15 p-4 sm:p-4.5 shadow-xl transition-all duration-300 shrink-0 lg:min-w-[260px]">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 font-bold text-sm text-emerald-200">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/30 border border-emerald-400/30 text-emerald-300">
+                  <School className="h-4 w-4" />
+                </div>
+                <span className="truncate">{studentClass || "Rombel Umum"}</span>
+              </div>
+              <Badge variant="outline" className="bg-emerald-500/20 border-emerald-400/30 text-[10px] text-emerald-300 py-0.5">
+                Aktif
+              </Badge>
             </div>
-            <div className="flex items-center gap-1.5 text-emerald-100/70">
-              <User className="h-3.5 w-3.5 text-emerald-400" />
-              <span className="truncate max-w-[200px]">Wali: {kelasInfo?.wali_kelas || "Belum ditentukan"}</span>
+
+            <div className="flex items-center gap-2 text-xs text-emerald-100/75 pt-1">
+              <User className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+              <span className="truncate">Wali: <strong className="text-white font-medium">{waliKelas || "Belum ditentukan"}</strong></span>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 pt-2.5 mt-1 border-t border-white/10 text-xs">
+              <div className="flex items-center gap-1.5 text-amber-300 font-semibold">
+                <Trophy className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                <span>{studentPoint} Poin Reward</span>
+              </div>
+              <span className="text-[11px] font-mono text-emerald-200/70">
+                NIS: {studentNis}
+              </span>
             </div>
           </div>
         </div>

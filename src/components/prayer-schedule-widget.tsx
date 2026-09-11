@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
 import { Compass, Clock, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -82,18 +82,20 @@ export function PrayerScheduleWidget() {
   ];
 
   return (
-    <Card className="overflow-hidden border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 via-background to-background">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <Card className="overflow-hidden border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card/85 to-card/70 py-4 gap-3">
+      <CardHeader className="flex flex-row items-center justify-between pb-0">
         <div className="flex items-center gap-2">
-          <Compass className="h-5 w-5 text-emerald-600" />
+          <Compass className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           <CardTitle className="text-base font-bold">Jadwal Sholat Hari Ini</CardTitle>
         </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <MapPin className="h-3 w-3 text-emerald-600" />
-          <span>Palembang</span>
-        </div>
+        <CardAction>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground px-2.5 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20">
+            <MapPin className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+            <span className="font-medium text-emerald-700 dark:text-emerald-300">Palembang</span>
+          </div>
+        </CardAction>
       </CardHeader>
-      <CardContent className="pt-2">
+      <CardContent className="pt-0">
         {error && (
           <p className="mb-2 text-xs text-amber-600 dark:text-amber-400">
             *Menggunakan perkiraan jadwal lokal (API luar jangkauan)

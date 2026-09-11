@@ -71,10 +71,21 @@ export default async function GuruDashboardPage() {
         }),
       ]);
 
+    const normalizeName = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
+    const photoMap = new Map<string, string | null>();
+    dbStudents.forEach((u) => {
+      if (u.image) {
+        photoMap.set(normalizeName(u.name), u.image);
+      }
+    });
+
     students = dbStudents;
     attendanceToday = dbAttHadir;
     totalAbsenToday = dbAttTotal;
-    bestStudents = dbBest;
+    bestStudents = dbBest.map((bs) => ({
+      ...bs,
+      foto: bs.foto || photoMap.get(normalizeName(bs.name)) || null,
+    }));
     achievements = dbAchieve;
     announcements = dbAnnounce;
   } catch (e) {

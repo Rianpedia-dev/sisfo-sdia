@@ -27,12 +27,47 @@ export default async function SiswaBestStudentPage() {
   let bestStudents: any[] = [];
 
   try {
-    bestStudents = studentClass
-      ? await prisma.bestStudent.findMany({
-          where: { kelas: studentClass },
-          orderBy: { created_at: "desc" },
-        })
-      : [];
+    const [dbBest, studentUsers] = await Promise.all([
+      studentClass
+        ? prisma.bestStudent.findMany({
+            where: { kelas: studentClass },
+            orderBy: { created_at: "desc" },
+          })
+        : [],
+      studentClass
+        ? prisma.user.findMany({
+            where: { kelas: studentClass, status: "1" },
+            select: { name: true, image: true },
+          })
+        : [],
+    ]);
+
+    const normalizeName = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
+    const photoMap = new Map<string, string | null>();
+    studentUsers.forEach((u) => {
+      if (u.image) {
+        photoMap.set(normalizeName(u.name), u.image);
+      }
+    });
+
+    const missingNames = dbBest
+      .filter((b) => !b.foto && !photoMap.has(normalizeName(b.name)))
+      .map((b) => b.name);
+
+    if (missingNames.length > 0) {
+      const extraUsers = await prisma.user.findMany({
+        where: { name: { in: missingNames }, status: "1" },
+        select: { name: true, image: true },
+      });
+      extraUsers.forEach((u) => {
+        if (u.image) photoMap.set(normalizeName(u.name), u.image);
+      });
+    }
+
+    bestStudents = dbBest.map((bs) => ({
+      ...bs,
+      foto: bs.foto || photoMap.get(normalizeName(bs.name)) || null,
+    }));
   } catch (e) {
     console.error("Database query error in siswa best-student:", e);
   }
@@ -42,7 +77,9 @@ export default async function SiswaBestStudentPage() {
       <div>
         <div className="flex items-center gap-2">
           <Award className="h-6 w-6 text-purple-600" />
-          <h1 className="text-2xl font-bold tracking-tight">Best Student Kelas {studentClass || "(Belum ada kelas)"}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Best Student {studentClass.toLowerCase().startsWith("kelas") ? studentClass : `Kelas ${studentClass || "(Belum ada kelas)"}`}
+          </h1>
         </div>
         <p className="text-sm text-muted-foreground mt-0.5">
           Daftar siswa teladan berprestasi yang dianugerahi gelar Best Student oleh wali kelas.
