@@ -1,16 +1,33 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import bcrypt from "bcryptjs";
 
 function getPrisma() {
-  const adapter = new PrismaMariaDb({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "",
-    database: "sisfo_alazhar",
-  });
-  return new PrismaClient({ adapter });
+  const url = process.env.DATABASE_URL || "mysql://root:@localhost:3306/sisfo_alazhar";
+  try {
+    const parsed = new URL(url);
+    const isLocal = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
+    const adapter = new PrismaMariaDb({
+      host: parsed.hostname || "localhost",
+      port: parsed.port ? parseInt(parsed.port, 10) : 3306,
+      user: decodeURIComponent(parsed.username || "root"),
+      password: decodeURIComponent(parsed.password || ""),
+      database: parsed.pathname.replace(/^\//, "") || "sisfo_alazhar",
+      connectionLimit: 10,
+      ssl: isLocal ? undefined : { minVersion: "TLSv1.2", rejectUnauthorized: true },
+    });
+    return new PrismaClient({ adapter });
+  } catch {
+    const adapter = new PrismaMariaDb({
+      host: "localhost",
+      port: 3306,
+      user: "root",
+      password: "",
+      database: "sisfo_alazhar",
+    });
+    return new PrismaClient({ adapter });
+  }
 }
 
 const prisma = getPrisma();
