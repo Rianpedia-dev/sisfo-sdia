@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { School, Eye, Plus, Trash2, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Plus, Trash2, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -134,10 +134,7 @@ export function ClassTable({ initialClasses, teachersList }: ClassTableProps) {
                     {(page - 1) * pageSize + idx + 1}
                   </TableCell>
                   <TableCell>
-                    <div className="font-semibold text-foreground flex items-center gap-2">
-                      <School className="h-4 w-4 text-emerald-600" />
-                      <span>{c.nama_kelas}</span>
-                    </div>
+                    <span className="font-semibold text-foreground">{c.nama_kelas}</span>
                   </TableCell>
                   <TableCell>
                     {c.wali_kelas ? (

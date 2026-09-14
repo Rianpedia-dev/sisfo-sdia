@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Video, History, Wifi } from "lucide-react";
+import { History, Wifi } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { CreateRoomForm } from "@/components/kelas-online/create-room-form";
@@ -117,8 +117,7 @@ export default async function GuruKelasOnlinePage() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Video className="h-6 w-6 text-emerald-600" />
+          <h1 className="text-2xl font-bold tracking-tight">
             Kelas Online
           </h1>
           <p className="text-sm text-muted-foreground mt-1">

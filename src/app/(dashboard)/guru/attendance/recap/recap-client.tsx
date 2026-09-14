@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, FileText, Calendar, School, Check } from "lucide-react";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -160,22 +160,19 @@ export function RecapClient({
       {/* Month Picker & Action Bar */}
       <Card className="border-emerald-500/20 shadow-sm">
         <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Calendar className="h-5 w-5 text-emerald-600" />
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-muted-foreground">Pilih Bulan:</span>
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(parseInt(e.target.value, 10))}
-                className="rounded-md border border-input bg-background px-3 py-1.5 text-sm shadow-sm"
-              >
-                {monthNames.slice(1).map((m, idx) => (
-                  <option key={m} value={idx + 1}>
-                    {m} {currentYear}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-muted-foreground">Pilih Bulan:</span>
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(parseInt(e.target.value, 10))}
+              className="rounded-md border border-input bg-background px-3 py-1.5 text-sm shadow-sm"
+            >
+              {monthNames.slice(1).map((m, idx) => (
+                <option key={m} value={idx + 1}>
+                  {m} {currentYear}
+                </option>
+              ))}
+            </select>
           </div>
 
           <Button
@@ -192,9 +189,8 @@ export function RecapClient({
       {/* Recap Table Preview */}
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <FileText className="h-5 w-5 text-emerald-600" />
-            <span>Rekapitulasi Bulan {monthNames[selectedMonth]} {currentYear}</span>
+          <CardTitle className="text-base">
+            Rekapitulasi Bulan {monthNames[selectedMonth]} {currentYear}
           </CardTitle>
           <CardDescription>
             Ringkasan kehadiran siswa kelas {guruClass} (Tahun Pelajaran {tahunPelajaran} • {semester})

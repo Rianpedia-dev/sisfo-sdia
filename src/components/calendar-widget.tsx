@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, MapPin, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface EventItem {
@@ -107,12 +107,9 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
   return (
     <Card className="overflow-hidden border-emerald-500/20 shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between border-b pb-3">
-        <div className="flex items-center gap-2">
-          <CalendarIcon className="h-5 w-5 text-emerald-600" />
-          <CardTitle className="text-base font-bold">
-            Kalender Kegiatan Sekolah
-          </CardTitle>
-        </div>
+        <CardTitle className="text-base font-bold">
+          Kalender Kegiatan Sekolah
+        </CardTitle>
         <div className="flex items-center gap-1.5">
           <span className="font-semibold text-sm">
             {monthNames[month]} {year}

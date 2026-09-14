@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { ClipboardCheck, History, CheckCircle2, AlertCircle, Save, Clock } from "lucide-react";
+import { History, CheckCircle2, AlertCircle, Save, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -54,10 +54,7 @@ export default async function SiswaPrayersPage() {
     <div className="space-y-6 max-w-3xl mx-auto">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
-            <ClipboardCheck className="h-6 w-6 text-emerald-600" />
-            <h1 className="text-2xl font-bold tracking-tight">Checklist Ibadah Sholat</h1>
-          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Checklist Ibadah Sholat</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Hari ini: <strong>{formatDateIndo(now)}</strong>
           </p>

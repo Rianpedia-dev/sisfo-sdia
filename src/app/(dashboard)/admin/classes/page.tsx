@@ -46,10 +46,7 @@ export default async function AdminClassesPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <School className="h-6 w-6 text-emerald-600" />
-          <h1 className="text-2xl font-bold tracking-tight">Kelola Kelas</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Kelola Kelas</h1>
         <p className="text-sm text-muted-foreground">
           Kelola rombongan belajar, penugasan wali kelas, dan kode restrict iPad per kelas.
         </p>

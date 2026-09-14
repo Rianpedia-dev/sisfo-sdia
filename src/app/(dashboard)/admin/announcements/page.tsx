@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { ArrowLeft, Megaphone, Send } from "lucide-react";
+import { ArrowLeft, Send } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,10 +33,7 @@ export default async function AdminCreateAnnouncementPage() {
 
       <Card className="border-emerald-500/20 shadow-md">
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <Megaphone className="h-5 w-5 text-emerald-600" />
-            <CardTitle>Publikasikan Pengumuman Baru</CardTitle>
-          </div>
+          <CardTitle>Publikasikan Pengumuman Baru</CardTitle>
           <CardDescription>
             Tulis pengumuman resmi dari Tim IT / Sekolah untuk seluruh kelas atau kelas tertentu.
           </CardDescription>

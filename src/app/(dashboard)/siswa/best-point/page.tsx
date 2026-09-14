@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Trophy, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LeaderboardPodium } from "@/components/ui/leaderboard-podium";
@@ -46,10 +46,7 @@ export default async function SiswaBestPointPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <div className="flex items-center gap-2">
-          <Trophy className="h-6 w-6 text-amber-500" />
-          <h1 className="text-2xl font-bold tracking-tight">Leaderboard Poin Kelas</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Leaderboard Poin Kelas</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Peringkat pengumpulan poin reward perilaku baik, keaktifan, dan kedisiplinan di kelas {studentClass}.
         </p>

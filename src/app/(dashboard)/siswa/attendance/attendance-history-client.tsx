@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Clock, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -111,9 +111,8 @@ export function AttendanceHistoryClient() {
       <Card className="border-emerald-500/20 shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
           <div>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Clock className="h-5 w-5 text-emerald-600" />
-              <span>Kalender Presensi: {monthNames[month]} {year}</span>
+            <CardTitle className="text-base">
+              Kalender Presensi: {monthNames[month]} {year}
             </CardTitle>
             <CardDescription>Status kehadiran harian yang dicatat oleh guru kelas</CardDescription>
           </div>

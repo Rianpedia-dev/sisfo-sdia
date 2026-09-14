@@ -85,10 +85,7 @@ export default async function GuruMyClassPage() {
       {/* Header with Academic Year & Semester per PRD Section 18 */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
-            <School className="h-6 w-6 text-emerald-600" />
-            <h1 className="text-2xl font-bold tracking-tight">Kelas Saya: {guruClass || "(Belum ada kelas)"}</h1>
-          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Kelas Saya: {guruClass || "(Belum ada kelas)"}</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Kelola murid, pantau checklist sholat harian, dan berikan reward poin kedisiplinan.
           </p>

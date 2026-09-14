@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { ArrowLeft, Calendar, ClipboardCheck } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { DailyAttendanceForm } from "./daily-attendance-form";
 import { formatDateIndo } from "@/lib/utils";
 
@@ -72,12 +72,9 @@ export default async function GuruDailyAttendancePage(props: {
       </div>
 
       <div>
-        <div className="flex items-center gap-2">
-          <ClipboardCheck className="h-6 w-6 text-emerald-600" />
-          <h1 className="text-2xl font-bold tracking-tight">
-            Form Presensi Harian: {formatDateIndo(date)}
-          </h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">
+          Form Presensi Harian: {formatDateIndo(date)}
+        </h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Kelas: <strong>{guruClass}</strong> • Jumlah Siswa: <strong>{students.length}</strong>
         </p>

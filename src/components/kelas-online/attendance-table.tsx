@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, Clock, ArrowRightLeft } from "lucide-react";
+import { Clock, ArrowRightLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface AttendanceRecord {
@@ -38,10 +38,9 @@ export function AttendanceTable({ records, title = "Daftar Hadir" }: AttendanceT
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Users className="h-4 w-4 text-emerald-600" />
+        <CardTitle className="text-base">
           {title}
-          <span className="text-sm font-normal text-muted-foreground">
+          <span className="text-sm font-normal text-muted-foreground ml-2">
             ({siswaRecords.length} siswa)
           </span>
         </CardTitle>

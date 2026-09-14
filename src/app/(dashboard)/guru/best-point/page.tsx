@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Trophy, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { LeaderboardPodium } from "@/components/ui/leaderboard-podium";
 import { UserAvatar } from "@/components/ui/user-avatar";
@@ -45,10 +45,7 @@ export default async function GuruBestPointPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <div className="flex items-center gap-2">
-          <Trophy className="h-6 w-6 text-amber-500" />
-          <h1 className="text-2xl font-bold tracking-tight">Leaderboard Poin Murid</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Leaderboard Poin Murid</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Peringkat keaktifan & reward siswa kelas {guruClass} berdasarkan akumulasi poin perilaku dan prestasi.
         </p>

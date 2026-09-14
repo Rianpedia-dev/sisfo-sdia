@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -38,10 +37,7 @@ export default async function SiswaLatenessPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <div className="flex items-center gap-2">
-          <Clock className="h-6 w-6 text-amber-500" />
-          <h1 className="text-2xl font-bold tracking-tight">Data Keterlambatan Hadir</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Data Keterlambatan Hadir</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Catatan riwayat waktu hadir terlambat dan alasan yang dicatat oleh guru piket / wali kelas.
         </p>

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Award, Plus, Trash2, Trophy } from "lucide-react";
+import { Plus, Trash2, Trophy } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,10 +92,7 @@ export default async function GuruBestStudentPage() {
         <div className="lg:col-span-4">
           <Card className="border-purple-500/20 shadow-sm sticky top-20">
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Award className="h-5 w-5 text-purple-600" />
-                <span>Pilih Best Student</span>
-              </CardTitle>
+              <CardTitle className="text-base">Pilih Best Student</CardTitle>
               <CardDescription>
                 Pilih siswa dan kategori penghargaan yang diraih.
               </CardDescription>

@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
 import { StudentTable } from "./student-table";
-import { GraduationCap } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -43,10 +42,7 @@ export default async function AdminStudentsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <GraduationCap className="h-6 w-6 text-emerald-600" />
-          <h1 className="text-2xl font-bold tracking-tight">Kelola Akun Siswa</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Kelola Akun Siswa</h1>
         <p className="text-sm text-muted-foreground">
           Kelola data pendaftaran siswa, verifikasi akun baru, dan import massal melalui Excel.
         </p>

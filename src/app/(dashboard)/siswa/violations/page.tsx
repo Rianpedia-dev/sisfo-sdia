@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -35,10 +34,7 @@ export default async function SiswaViolationsPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="h-6 w-6 text-rose-500" />
-          <h1 className="text-2xl font-bold tracking-tight">Data Pelanggaran Kedisiplinan</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Data Pelanggaran Kedisiplinan</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Catatan kedisiplinan dan tata tertib yang dicatat oleh dewan guru untuk bahan evaluasi diri.
         </p>

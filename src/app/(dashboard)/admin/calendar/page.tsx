@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { CalendarClient } from "@/components/calendar/calendar-client";
 
 export const dynamic = "force-dynamic";
@@ -23,10 +22,7 @@ export default async function AdminCalendarPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <CalendarIcon className="h-6 w-6 text-emerald-600" />
-          <h1 className="text-2xl font-bold tracking-tight">Kalender Kegiatan Akademik</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Kalender Kegiatan Akademik</h1>
         <p className="text-sm text-muted-foreground">
           Kelola agenda kegiatan sekolah, jadwal ujian, field trip, dan kegiatan khusus per jenjang kelas.
         </p>

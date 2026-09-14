@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Users, GraduationCap, UserCheck, UserX, ShieldAlert } from "lucide-react";
+import { Users, GraduationCap, UserCheck, UserX } from "lucide-react";
 import { StatCard } from "@/components/stat-card";
 import { AnnouncementTimeline } from "@/components/announcement-timeline";
 import { CalendarWidget } from "@/components/calendar-widget";
@@ -132,10 +132,7 @@ export default async function AdminDashboardPage() {
 
       {/* Tabel Code Restrict */}
       <div className="space-y-3.5">
-        <div className="flex items-center gap-2">
-          <ShieldAlert className="h-5 w-5 text-emerald-600" />
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Kode Restrict iPad per Kelas</h2>
-        </div>
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Kode Restrict iPad per Kelas</h2>
         <AdminRestrictTable initialData={formattedRestricts} />
       </div>
     </div>

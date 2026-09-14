@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Video, BookOpen, Loader2 } from "lucide-react";
+import { BookOpen, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -46,8 +46,7 @@ export function CreateRoomForm({ kelas }: CreateRoomFormProps) {
   return (
     <Card className="border-emerald-200/50 bg-gradient-to-br from-emerald-50/50 to-white dark:from-emerald-950/20 dark:to-slate-900 dark:border-emerald-800/30">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Video className="h-5 w-5 text-emerald-600" />
+        <CardTitle className="text-lg">
           Buat Kelas Online Baru
         </CardTitle>
         <p className="text-sm text-muted-foreground">

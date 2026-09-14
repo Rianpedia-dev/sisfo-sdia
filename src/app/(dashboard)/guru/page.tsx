@@ -125,8 +125,7 @@ export default async function GuruDashboardPage() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
             Assalamu&apos;alaikum, {session.name}
           </h1>
-          <p className="text-xs sm:text-sm md:text-base text-muted-foreground mt-1 flex items-center gap-2 font-normal">
-            <School className="h-4 w-4 text-emerald-600" />
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground mt-1 font-normal">
             <span>Wali Kelas: <strong className="text-foreground font-medium">{guruClass || "Belum ditentukan"}</strong></span>
           </p>
         </div>

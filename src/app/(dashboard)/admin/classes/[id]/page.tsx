@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-import { ArrowLeft, School, User, GraduationCap, ShieldAlert } from "lucide-react";
+import { ArrowLeft, School, User, ShieldAlert } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -112,10 +112,7 @@ export default async function AdminClassDetailPage(props: {
       <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <GraduationCap className="h-5 w-5 text-emerald-600" />
-              <CardTitle>Daftar Siswa Terdaftar</CardTitle>
-            </div>
+            <CardTitle>Daftar Siswa Terdaftar</CardTitle>
             <Badge className="bg-emerald-600">
               Total: {students.length} Siswa
             </Badge>

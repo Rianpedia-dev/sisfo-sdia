@@ -7,7 +7,6 @@ import {
   Clock,
   Trophy,
   Award,
-  School,
   User,
   Sparkles,
   CheckCircle2,
@@ -217,10 +216,7 @@ export default async function SiswaDashboardPage() {
           {/* Right: Glassmorphic Status Card (Kelas, Wali, Poin, NIS) */}
           <div className="flex flex-col gap-2 rounded-2xl bg-white/10 hover:bg-white/[0.12] backdrop-blur-md border border-white/15 p-4 sm:p-4.5 shadow-xl transition-all duration-300 shrink-0 lg:min-w-[260px]">
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 font-bold text-sm text-emerald-200">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/30 border border-emerald-400/30 text-emerald-300">
-                  <School className="h-4 w-4" />
-                </div>
+              <div className="font-bold text-sm text-emerald-200">
                 <span className="truncate">{studentClass || "Rombel Umum"}</span>
               </div>
               <Badge variant="outline" className="bg-emerald-500/20 border-emerald-400/30 text-[10px] text-emerald-300 py-0.5">

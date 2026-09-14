@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
 import { TeacherTable } from "./teacher-table";
-import { Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -32,10 +31,7 @@ export default async function AdminTeachersPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <Users className="h-6 w-6 text-emerald-600" />
-          <h1 className="text-2xl font-bold tracking-tight">Kelola Akun Guru</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Kelola Akun Guru</h1>
         <p className="text-sm text-muted-foreground">
           Kelola data dewan guru, verifikasi pendaftaran akun baru, dan atur penugasan wali kelas.
         </p>

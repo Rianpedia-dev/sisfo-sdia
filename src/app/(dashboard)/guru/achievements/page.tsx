@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Sparkles, Plus, Trash2, Trophy } from "lucide-react";
+import { Plus, Trash2, Trophy } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,10 +44,7 @@ export default async function GuruAchievementsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-amber-500" />
-          <h1 className="text-2xl font-bold tracking-tight">Prestasi & Kejuaraan Siswa</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Prestasi & Kejuaraan Siswa</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Catat pencapaian lomba, kejuaraan tahfidz, sains, olahraga, dan seni siswa SDIA Cairo.
         </p>
@@ -58,9 +55,7 @@ export default async function GuruAchievementsPage() {
         <div className="lg:col-span-4">
           <Card className="border-amber-500/20 shadow-sm sticky top-20">
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Plus className="h-4 w-4 text-amber-600" /> Catat Prestasi Baru
-              </CardTitle>
+              <CardTitle className="text-base">Catat Prestasi Baru</CardTitle>
               <CardDescription>
                 Prestasi akan ditampilkan di etalase dashboard siswa & guru.
               </CardDescription>

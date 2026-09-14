@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { MonitorPlay, Video, Clock, Users, BarChart3, Wifi } from "lucide-react";
+import { Video, Clock, Users, BarChart3, Wifi } from "lucide-react";
 import { StatCard } from "@/components/stat-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -140,8 +140,7 @@ export default async function AdminKelasOnlinePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <MonitorPlay className="h-6 w-6 text-emerald-600" />
+        <h1 className="text-2xl font-bold tracking-tight">
           Monitor Kelas Online
         </h1>
         <p className="text-sm text-muted-foreground mt-1">

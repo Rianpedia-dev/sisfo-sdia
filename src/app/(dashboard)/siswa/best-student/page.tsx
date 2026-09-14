@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Award, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -83,12 +83,9 @@ export default async function SiswaBestStudentPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <div className="flex items-center gap-2">
-          <Award className="h-6 w-6 text-purple-600" />
-          <h1 className="text-2xl font-bold tracking-tight">
-            Best Student {studentClass.toLowerCase().startsWith("kelas") ? studentClass : `Kelas ${studentClass || "(Belum ada kelas)"}`}
-          </h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">
+          Best Student {studentClass.toLowerCase().startsWith("kelas") ? studentClass : `Kelas ${studentClass || "(Belum ada kelas)"}`}
+        </h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Daftar siswa teladan berprestasi yang dianugerahi gelar Best Student oleh wali kelas.
         </p>

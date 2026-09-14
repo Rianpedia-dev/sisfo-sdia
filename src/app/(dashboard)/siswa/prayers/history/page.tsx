@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { ArrowLeft, History, Check, X, CheckCircle2, Clock } from "lucide-react";
+import { ArrowLeft, Check, X, CheckCircle2, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -50,10 +50,7 @@ export default async function SiswaPrayerHistoryPage() {
       </div>
 
       <div>
-        <div className="flex items-center gap-2">
-          <History className="h-6 w-6 text-emerald-600" />
-          <h1 className="text-2xl font-bold tracking-tight">Riwayat Checklist Ibadah Sholat</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Riwayat Checklist Ibadah Sholat</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Catatan rekapitulasi sholat harian 6 waktu beserta status pengesahan dari guru wali kelas.
         </p>

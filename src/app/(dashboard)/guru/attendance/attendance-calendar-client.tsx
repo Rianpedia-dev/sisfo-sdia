@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -52,9 +52,8 @@ export function AttendanceCalendarClient({ filledDates, guruClass }: AttendanceC
     <Card className="border-emerald-500/20 shadow-sm">
       <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
         <div>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <CalendarIcon className="h-5 w-5 text-emerald-600" />
-            <span>Kalender Presensi Kelas {guruClass}</span>
+          <CardTitle className="text-lg">
+            Kalender Presensi Kelas {guruClass}
           </CardTitle>
           <CardDescription>
             Klik tanggal untuk membuka lembar absensi harian. Tanggal bercentang menandakan absensi telah tercatat.

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Megaphone, Send, Calendar, Edit, Trash2 } from "lucide-react";
+import { Send, Calendar, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,10 +46,7 @@ export default async function GuruAnnouncementsPage() {
         <div className="lg:col-span-5">
           <Card className="border-emerald-500/20 shadow-sm sticky top-20">
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <Megaphone className="h-5 w-5 text-emerald-600" />
-                <CardTitle className="text-base">Tulis Pengumuman Baru</CardTitle>
-              </div>
+              <CardTitle className="text-base">Tulis Pengumuman Baru</CardTitle>
               <CardDescription>
                 Pengumuman otomatis ditujukan untuk {guruClass}.
               </CardDescription>

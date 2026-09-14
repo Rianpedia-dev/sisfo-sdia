@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { ClipboardCheck, Table as TableIcon, FileText, Calendar as CalendarIcon, CheckCircle2 } from "lucide-react";
+import { Table as TableIcon, FileText, Calendar as CalendarIcon, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,10 +42,7 @@ export default async function GuruAttendancePage() {
       {/* Header Info */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
-            <ClipboardCheck className="h-6 w-6 text-emerald-600" />
-            <h1 className="text-2xl font-bold tracking-tight">Presensi Absensi Kelas</h1>
-          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Presensi Absensi Kelas</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Pilih tanggal pada kalender untuk mengisi atau memperbarui kehadiran siswa kelas {guruClass}.
           </p>
