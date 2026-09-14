@@ -16,7 +16,7 @@ function createPrismaClient() {
       user: decodeURIComponent(parsed.username || "root"),
       password: decodeURIComponent(parsed.password || ""),
       database: parsed.pathname.replace(/^\//, "") || "sisfo_alazhar",
-      connectionLimit: 10,
+      connectionLimit: 5,
       ssl: isLocal ? undefined : { minVersion: "TLSv1.2", rejectUnauthorized: true },
     });
     return new PrismaClient({ adapter });
