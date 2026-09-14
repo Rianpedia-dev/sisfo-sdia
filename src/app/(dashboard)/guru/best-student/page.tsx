@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createBestStudentAction, deleteBestStudentAction } from "@/actions/guru";
+import { UserAvatar } from "@/components/ui/user-avatar";
+import { getUserProfileImage, getDefaultProfileImage } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -40,10 +42,12 @@ export default async function GuruBestStudentPage() {
 
     const normalizeName = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
     const photoMap = new Map<string, string | null>();
+    const genderMap = new Map<string, string | null>();
     dbStudents.forEach((u) => {
       if (u.image) {
         photoMap.set(normalizeName(u.name), u.image);
       }
+      genderMap.set(normalizeName(u.name), u.gender);
     });
 
     const missingNames = dbBest
@@ -53,18 +57,23 @@ export default async function GuruBestStudentPage() {
     if (missingNames.length > 0) {
       const extraUsers = await prisma.user.findMany({
         where: { name: { in: missingNames }, status: "1" },
-        select: { name: true, image: true },
+        select: { name: true, image: true, gender: true },
       });
       extraUsers.forEach((u) => {
         if (u.image) photoMap.set(normalizeName(u.name), u.image);
+        genderMap.set(normalizeName(u.name), u.gender);
       });
     }
 
     students = dbStudents;
-    bestStudents = dbBest.map((bs) => ({
-      ...bs,
-      foto: bs.foto || photoMap.get(normalizeName(bs.name)) || null,
-    }));
+    bestStudents = dbBest.map((bs) => {
+      const g = genderMap.get(normalizeName(bs.name));
+      return {
+        ...bs,
+        gender: g,
+        foto: getUserProfileImage(bs.foto || photoMap.get(normalizeName(bs.name)), g),
+      };
+    });
   } catch (e) {
     console.error("Database query error in best student:", e);
   }
@@ -165,12 +174,12 @@ export default async function GuruBestStudentPage() {
                   <CardContent className="p-5 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-purple-100 text-purple-800 text-xl font-bold border border-purple-200 overflow-hidden">
-                        {bs.foto ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={bs.foto} alt={bs.name} className="h-full w-full object-cover" />
-                        ) : (
-                          bs.name.substring(0, 2).toUpperCase()
-                        )}
+                        <UserAvatar
+                          src={bs.foto}
+                          gender={bs.gender}
+                          alt={bs.name}
+                          className="h-full w-full object-cover"
+                        />
                       </div>
                       <div className="min-w-0">
                         <h3 className="font-bold text-sm text-foreground truncate">{bs.name}</h3>

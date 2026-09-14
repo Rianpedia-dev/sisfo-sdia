@@ -8,13 +8,12 @@ import {
   Tv,
   HelpCircle,
   LogOut,
-  Sparkles,
   ExternalLink,
   Loader2,
-  Camera,
-  Mic,
-  ArrowUpRight,
+  ScreenShare,
+  StopCircle,
 } from "lucide-react";
+import type { DailyCall } from "@daily-co/daily-js";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useKelasOnline } from "./kelas-online-context";
@@ -26,6 +25,11 @@ export function PersistentVideoHost() {
     activeSession,
     viewState,
     isHelpOpen,
+    isSharingScreen,
+    setIsSharingScreen,
+    toggleScreenShare,
+    registerCallFrame,
+    unregisterCallFrame,
     closeHelp,
     openHelp,
     restore,
@@ -49,6 +53,12 @@ export function PersistentVideoHost() {
     ? pathname === `/guru/kelas-online/${activeSession.roomId}` ||
       pathname === `/siswa/kelas-online/${activeSession.roomId}`
     : false;
+
+  const embedUrl = activeSession
+    ? activeSession.token
+      ? `${activeSession.roomUrl}?t=${activeSession.token}`
+      : activeSession.roomUrl
+    : "";
 
   // Track anchor position on the room page
   useEffect(() => {
@@ -90,16 +100,98 @@ export function PersistentVideoHost() {
     };
   }, [activeSession, pathname, viewState]);
 
-  // Listen to Daily iframe postMessages (leave meeting, etc.)
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const callFrameRef = useRef<DailyCall | null>(null);
+
+  // Setup DailyIframe wrapper and sync screen sharing
+  useEffect(() => {
+    if (!iframeRef.current) return;
+
+    let callFrame: DailyCall | null = null;
+    let isCancelled = false;
+
+    const initDaily = async () => {
+      try {
+        const DailyModule = await import("@daily-co/daily-js");
+        const Daily = DailyModule.default;
+
+        if (isCancelled || !iframeRef.current) return;
+
+        callFrame =
+          Daily.getCallInstance() ||
+          Daily.wrap(iframeRef.current, {
+            url: embedUrl,
+          });
+        callFrameRef.current = callFrame;
+        registerCallFrame(callFrame, iframeRef.current);
+
+        const onJoinedMeeting = () => {
+          setIsLoading(false);
+        };
+        const onScreenShareStarted = () => {
+          setIsSharingScreen(true);
+        };
+        const onScreenShareStopped = () => {
+          setIsSharingScreen(false);
+        };
+        const onLeftMeeting = () => {
+          leaveSession();
+        };
+
+        callFrame.on("joined-meeting", onJoinedMeeting);
+        callFrame.on("local-screen-share-started", onScreenShareStarted);
+        callFrame.on("local-screen-share-stopped", onScreenShareStopped);
+        callFrame.on("left-meeting", onLeftMeeting);
+
+      } catch (err) {
+        console.warn("Daily wrapper setup:", err);
+      }
+    };
+
+    initDaily();
+
+    return () => {
+      isCancelled = true;
+      unregisterCallFrame();
+      if (callFrame) {
+        try {
+          callFrame.destroy();
+        } catch {
+          // ignore
+        }
+      }
+    };
+  }, [embedUrl, registerCallFrame, unregisterCallFrame, setIsSharingScreen, leaveSession, toggleScreenShare]);
+
+  // Listen to Daily iframe postMessages (leave meeting, screen share started/stopped, etc.)
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
+      if (!e.data) return;
       if (
-        e.data &&
-        (e.data.action === "left-meeting" ||
-          e.data.event === "left-meeting" ||
-          e.data.msg === "left-meeting")
+        e.data.action === "joined-meeting" ||
+        e.data.event === "joined-meeting" ||
+        e.data.msg === "joined-meeting"
+      ) {
+        setIsLoading(false);
+      }
+      if (
+        e.data.action === "left-meeting" ||
+        e.data.event === "left-meeting" ||
+        e.data.msg === "left-meeting"
       ) {
         leaveSession();
+      }
+      if (
+        e.data.action === "local-screen-share-started" ||
+        e.data.event === "local-screen-share-started"
+      ) {
+        setIsSharingScreen(true);
+      }
+      if (
+        e.data.action === "local-screen-share-stopped" ||
+        e.data.event === "local-screen-share-stopped"
+      ) {
+        setIsSharingScreen(false);
       }
     };
 
@@ -107,7 +199,7 @@ export function PersistentVideoHost() {
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, [leaveSession]);
+  }, [leaveSession, setIsSharingScreen]);
 
   // Lock browser body and html scrollbar when in Fullscreen or Theater mode
   useEffect(() => {
@@ -125,10 +217,6 @@ export function PersistentVideoHost() {
   }, [viewState]);
 
   if (!activeSession) return null;
-
-  const embedUrl = activeSession.token
-    ? `${activeSession.roomUrl}?t=${activeSession.token}`
-    : activeSession.roomUrl;
 
   // Determine container style and positioning based on viewState
   let containerStyle: React.CSSProperties = {};
@@ -156,9 +244,9 @@ export function PersistentVideoHost() {
       "fixed bottom-4 right-4 z-50 w-[330px] sm:w-[400px] h-[230px] sm:h-[270px] rounded-2xl shadow-2xl border-2 border-emerald-500/80 bg-slate-950 flex flex-col overflow-hidden transition-all duration-300 ease-out ring-4 ring-emerald-500/10";
     containerStyle = {};
   } else {
-    // Normal in-page mode matching anchor position
+    // Normal in-page mode matching anchor position (z-10 so ClassroomTopBar and Navbar stay on top when scrolling)
     containerClasses =
-      "fixed z-20 rounded-2xl overflow-hidden shadow-xl border border-slate-800 bg-slate-950 flex flex-col transition-all duration-300";
+      "fixed z-10 rounded-2xl overflow-hidden shadow-xl border border-slate-800 bg-slate-950 flex flex-col";
     containerStyle = {
       top: `${anchorRect.top}px`,
       left: `${anchorRect.left}px`,
@@ -231,6 +319,31 @@ export function PersistentVideoHost() {
             </div>
 
             <div className="flex items-center gap-2">
+              {/* Tombol Bagikan Layar - Khusus Tampilan Mobile & Tablet (Di Desktop sudah ada tombol Share bawaan video) */}
+              <Button
+                variant={isSharingScreen ? "destructive" : "outline"}
+                size="sm"
+                onClick={toggleScreenShare}
+                className={`h-8 px-2.5 text-xs font-semibold rounded-lg cursor-pointer transition-all lg:hidden ${
+                  isSharingScreen
+                    ? "bg-rose-600 hover:bg-rose-700 text-white shadow-sm ring-2 ring-rose-500/50 animate-pulse"
+                    : "bg-emerald-700/80 hover:bg-emerald-600 border-emerald-500/50 text-emerald-100 hover:text-white"
+                }`}
+                title={isSharingScreen ? "Hentikan Berbagi Layar" : "Bagikan Layar Anda ke Semua Peserta"}
+              >
+                {isSharingScreen ? (
+                  <>
+                    <StopCircle className="h-3.5 w-3.5 mr-1 text-white" />
+                    <span>Berhenti Berbagi</span>
+                  </>
+                ) : (
+                  <>
+                    <ScreenShare className="h-3.5 w-3.5 mr-1 text-emerald-300" />
+                    <span>Bagikan Layar</span>
+                  </>
+                )}
+              </Button>
+
               <Button
                 variant="outline"
                 size="sm"
@@ -302,6 +415,7 @@ export function PersistentVideoHost() {
 
           {/* Daily Prebuilt Iframe */}
           <iframe
+            ref={iframeRef}
             src={embedUrl}
             allow="camera *; microphone *; fullscreen *; display-capture *; autoplay *"
             className="w-full h-full flex-1 border-0 block"
@@ -313,20 +427,38 @@ export function PersistentVideoHost() {
 
           {/* Helper Footer (only when not in minimized/PIP) */}
           {!isPip && (
-            <div className="flex items-center justify-between px-3 py-1.5 bg-slate-900/95 text-[11px] text-slate-400 border-t border-slate-800 shrink-0">
-              <span className="flex items-center gap-1.5 text-slate-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                Kelas Online • SD Al-Azhar Cairo
-              </span>
-              <a
-                href={embedUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 transition-colors"
-              >
-                <ExternalLink className="h-3 w-3" />
-                Buka Tab Terpisah (Jika Kamera Terkendala)
-              </a>
+            <div className="flex items-center justify-between gap-2 px-3.5 py-2 bg-slate-900/95 text-[11px] text-slate-400 border-t border-slate-800 shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="flex items-center gap-1.5 text-slate-300 font-medium truncate">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
+                  Kelas Online • SD Al-Azhar Cairo
+                </span>
+                {isSharingScreen && (
+                  <button
+                    type="button"
+                    onClick={toggleScreenShare}
+                    className="px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[10px] font-bold flex items-center gap-1 shrink-0 animate-pulse hover:bg-rose-500/30 cursor-pointer transition-colors"
+                    title="Klik untuk menghentikan berbagi layar"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-rose-400"></span>
+                    Sedang Berbagi Layar (Hentikan)
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={embedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition-colors py-1 px-2 rounded-lg hover:bg-slate-800/60 text-xs font-medium"
+                  title="Buka ruang kelas di tab peramban terpisah jika kamera atau layar terkendala"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Buka di Tab Terpisah</span>
+                  <span className="sm:hidden">Tab Baru</span>
+                </a>
+              </div>
             </div>
           )}
         </div>

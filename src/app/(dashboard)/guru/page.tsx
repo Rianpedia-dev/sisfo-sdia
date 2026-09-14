@@ -8,6 +8,8 @@ import { AnnouncementTimeline } from "@/components/announcement-timeline";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/ui/user-avatar";
+import { getDefaultProfileImage } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -73,19 +75,25 @@ export default async function GuruDashboardPage() {
 
     const normalizeName = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
     const photoMap = new Map<string, string | null>();
+    const genderMap = new Map<string, string | null>();
     dbStudents.forEach((u) => {
       if (u.image) {
         photoMap.set(normalizeName(u.name), u.image);
       }
+      genderMap.set(normalizeName(u.name), u.gender);
     });
 
     students = dbStudents;
     attendanceToday = dbAttHadir;
     totalAbsenToday = dbAttTotal;
-    bestStudents = dbBest.map((bs) => ({
-      ...bs,
-      foto: bs.foto || photoMap.get(normalizeName(bs.name)) || null,
-    }));
+    bestStudents = dbBest.map((bs) => {
+      const g = genderMap.get(normalizeName(bs.name));
+      return {
+        ...bs,
+        gender: g,
+        foto: bs.foto || photoMap.get(normalizeName(bs.name)) || getDefaultProfileImage(g),
+      };
+    });
     achievements = dbAchieve;
     announcements = dbAnnounce;
   } catch (e) {
@@ -125,22 +133,22 @@ export default async function GuruDashboardPage() {
       </div>
 
       {/* Quick Action Banner: Status Absensi Hari Ini */}
-      <Card className="border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-background to-background shadow-sm overflow-hidden">
+      <Card className="border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20 overflow-hidden">
         <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className={`flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md ${
+            <div className={`flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-xs ${
               totalAbsenToday > 0 ? "bg-emerald-600" : "bg-amber-500"
             }`}>
               <ClipboardCheck className="h-6 w-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-bold text-foreground">Presensi Kelas Hari Ini</p>
-                <Badge className={totalAbsenToday > 0 ? "bg-emerald-600 font-mono text-xs" : "bg-amber-500 font-mono text-xs"}>
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-sm sm:text-base font-bold text-foreground">Presensi Kelas Hari Ini</p>
+                <Badge className={totalAbsenToday > 0 ? "bg-emerald-600 text-white font-mono text-xs px-2 py-0.5" : "bg-amber-500 text-white font-mono text-xs px-2 py-0.5"}>
                   {totalAbsenToday > 0 ? `${attendanceToday} / ${students.length} Hadir` : "Belum Diisi"}
                 </Badge>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                 {totalAbsenToday > 0
                   ? `Alhamdulillah, data kehadiran ${guruClass} untuk hari ini telah tercatat.`
                   : `Kehadiran siswa kelas ${guruClass} untuk hari ini belum diisi. Sentuh tombol untuk mengisi.`
@@ -150,12 +158,12 @@ export default async function GuruDashboardPage() {
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
             <Link href={`/guru/attendance/${todayFormatted}`} className="flex-1 sm:flex-none">
-              <Button variant="default" size="lg" className="w-full sm:w-auto">
+              <Button variant="default" size="default" className="w-full sm:w-auto">
                 {totalAbsenToday > 0 ? "Ubah Presensi" : "Isi Presensi Sekarang"}
               </Button>
             </Link>
             <Link href={`/guru/attendance/table/${todayFormatted}`} className="hidden sm:inline-flex">
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="default">
                 Tabel Matriks
               </Button>
             </Link>
@@ -169,38 +177,46 @@ export default async function GuruDashboardPage() {
           title="Kelas Saya"
           value={`${students.length} Siswa`}
           icon={Users}
+          imageSrc="/images/siswa.avif"
           description={guruClass || "Belum ada kelas"}
           variant="emerald"
+          href="/guru/my-class"
         />
         <StatCard
           title="Absensi Hari Ini"
           value={totalAbsenToday > 0 ? `${attendanceToday} Hadir` : "Belum diisi"}
           icon={ClipboardCheck}
+          imageSrc="/images/absensi.avif"
           description={totalAbsenToday > 0 ? `Dari ${students.length} siswa` : "Buka form absen"}
           variant="blue"
+          href={`/guru/attendance/${todayFormatted}`}
         />
         <StatCard
           title="Best Point"
           value={studentWithMaxPoints?.name ? studentWithMaxPoints.name.split(" ")[0] : "-"}
           icon={Trophy}
+          imageSrc="/images/best-point.avif"
           description={studentWithMaxPoints ? `${studentWithMaxPoints.point || 0} Poin Reward` : "Belum ada poin"}
           variant="amber"
+          href="/guru/best-point"
         />
         <StatCard
           title="Best Student"
           value={`${bestStudents.length} Siswa`}
           icon={Award}
+          imageSrc="/images/best-student.avif"
           description="Siswa teladan kelas"
           variant="purple"
+          href="/guru/best-student"
         />
       </div>
 
       {/* 2 Columns: Announcements + Best Student & Prestasi */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Timeline Pengumuman */}
-        <div className="space-y-4 lg:col-span-7">
+        <div className="space-y-3.5 lg:col-span-7">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Timeline Pengumuman</h2>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Timeline Pengumuman</h2>
             <Link
               href="/guru/announcements"
               className="text-xs font-semibold text-emerald-600 hover:underline"
@@ -218,16 +234,16 @@ export default async function GuruDashboardPage() {
         {/* Right side: Best Student Carousel & Prestasi Siswa */}
         <div className="space-y-6 lg:col-span-5">
           {/* Best Student Box */}
-          <Card className="border-purple-500/20 shadow-sm">
+          <Card className="border border-purple-500/20">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-purple-600" />
+                  <Award className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   <CardTitle className="text-base">Best Student Kelas</CardTitle>
                 </div>
                 <Link
                   href="/guru/best-student"
-                  className="text-xs font-semibold text-purple-600 hover:underline"
+                  className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline"
                 >
                   Kelola
                 </Link>
@@ -247,12 +263,12 @@ export default async function GuruDashboardPage() {
                       className="flex flex-col items-center justify-center rounded-xl border bg-card p-3 text-center transition-all hover:shadow-sm"
                     >
                       <div className="h-14 w-14 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-lg mb-2 overflow-hidden border border-purple-200">
-                        {bs.foto ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={bs.foto} alt={bs.name} className="h-full w-full object-cover" />
-                        ) : (
-                          bs.name.substring(0, 2).toUpperCase()
-                        )}
+                        <UserAvatar
+                          src={bs.foto}
+                          gender={bs.gender}
+                          alt={bs.name}
+                          className="h-full w-full object-cover"
+                        />
                       </div>
                       <p className="font-bold text-xs truncate w-full">{bs.name}</p>
                       <Badge variant="secondary" className="mt-1 text-[10px] bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
@@ -266,7 +282,7 @@ export default async function GuruDashboardPage() {
           </Card>
 
           {/* Prestasi Siswa Section */}
-          <Card className="border-amber-500/20 shadow-sm">
+          <Card className="border border-amber-500/20">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

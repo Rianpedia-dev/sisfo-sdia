@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { getUserProfileImage, getDefaultProfileImage } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -280,7 +281,20 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
                       {(page - 1) * pageSize + idx + 1}
                     </TableCell>
                     <TableCell>
-                      <span className="font-semibold text-foreground">{s.name}</span>
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-7 w-7 rounded-full overflow-hidden border border-border shrink-0 bg-muted">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={getUserProfileImage(s.image, s.gender)}
+                            alt={s.name}
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = getDefaultProfileImage(s.gender);
+                            }}
+                          />
+                        </div>
+                        <span className="font-semibold text-foreground">{s.name}</span>
+                      </div>
                     </TableCell>
                     <TableCell className="font-mono text-xs">{s.nis || "-"}</TableCell>
                     <TableCell className="text-center font-medium">{s.gender || "-"}</TableCell>
@@ -558,10 +572,25 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
       <Dialog open={!!profileModalStudent} onOpenChange={(open) => !open && setProfileModalStudent(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Informasi Siswa & Ibadah</DialogTitle>
-            <DialogDescription>
-              {profileModalStudent?.name} ({profileModalStudent?.gender === "L" ? "Laki-laki" : "Perempuan"})
-            </DialogDescription>
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full overflow-hidden border border-border shrink-0 bg-muted">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={getUserProfileImage(profileModalStudent?.image, profileModalStudent?.gender)}
+                  alt={profileModalStudent?.name || "Siswa"}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = getDefaultProfileImage(profileModalStudent?.gender);
+                  }}
+                />
+              </div>
+              <div>
+                <DialogTitle>{profileModalStudent?.name}</DialogTitle>
+                <DialogDescription>
+                  {profileModalStudent?.gender === "L" ? "Laki-laki" : "Perempuan"} • NIS: {profileModalStudent?.nis || "-"}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
           {profileModalStudent && (
             <div className="space-y-4 py-2 text-sm">

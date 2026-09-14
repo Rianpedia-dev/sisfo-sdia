@@ -5,6 +5,8 @@ import { Trophy, Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LeaderboardPodium } from "@/components/ui/leaderboard-podium";
+import { UserAvatar } from "@/components/ui/user-avatar";
+import { getUserProfileImage, getDefaultProfileImage } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -73,7 +75,8 @@ export default async function SiswaBestPointPage() {
                 userName: s.name,
                 rank: idx + 1,
                 value: parseInt(s.point || "0", 10) || 0,
-                avatarUrl: s.image || undefined,
+                avatarUrl: getUserProfileImage(s.image, s.gender),
+                gender: s.gender,
               }))}
               size="lg"
               medalStyle="modern"
@@ -131,13 +134,23 @@ export default async function SiswaBestPointPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span>{s.name}</span>
-                            {isMe && (
-                              <Badge className="bg-emerald-600 text-white text-[10px] py-0 px-1.5">
-                                Anda
-                              </Badge>
-                            )}
+                          <div className="flex items-center gap-2.5">
+                            <div className="h-8 w-8 rounded-full overflow-hidden border border-border shrink-0 bg-muted">
+                              <UserAvatar
+                                src={s.image}
+                                gender={s.gender}
+                                alt={s.name}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>{s.name}</span>
+                              {isMe && (
+                                <Badge className="bg-emerald-600 text-white text-[10px] py-0 px-1.5">
+                                  Anda
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell className="font-mono text-xs">{s.nis || "-"}</TableCell>

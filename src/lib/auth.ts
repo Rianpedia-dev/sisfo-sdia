@@ -18,6 +18,7 @@ export interface SessionUser {
   nis?: string | null;
   nip?: string | null;
   appleid?: string | null;
+  gender?: string | null;
   image?: string | null;
 }
 
@@ -160,6 +161,7 @@ export async function authenticateUser(
     nis: user.nis,
     nip: user.nip,
     appleid: user.appleid,
+    gender: user.gender || null,
     image: user.image,
   };
 

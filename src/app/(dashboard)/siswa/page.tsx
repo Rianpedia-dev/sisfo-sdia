@@ -18,6 +18,8 @@ import { PrayerScheduleWidget } from "@/components/prayer-schedule-widget";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/ui/user-avatar";
+import { getDefaultProfileImage, getUserProfileImage } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +54,7 @@ export default async function SiswaDashboardPage() {
         isNum
           ? prisma.user.findUnique({
               where: { id: BigInt(session.id) },
-              select: { image: true, point: true, nis: true, name: true },
+              select: { image: true, point: true, nis: true, name: true, gender: true },
             })
           : null,
         studentClass
@@ -105,26 +107,32 @@ export default async function SiswaDashboardPage() {
 
     const normalizeName = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
     const photoMap = new Map<string, string | null>();
+    const genderMap = new Map<string, string | null>();
     dbClassmates.forEach((u) => {
       if (u.image) {
         photoMap.set(normalizeName(u.name), u.image);
       }
+      genderMap.set(normalizeName(u.name), u.gender);
     });
 
     kelasInfo = dbKelas;
     totalViolations = dbVio;
     totalLateness = dbLate;
     classmates = dbClassmates;
-    bestStudents = dbBest.map((bs) => ({
-      ...bs,
-      foto: bs.foto || photoMap.get(normalizeName(bs.name)) || null,
-    }));
+    bestStudents = dbBest.map((bs) => {
+      const g = genderMap.get(normalizeName(bs.name));
+      return {
+        ...bs,
+        gender: g,
+        foto: bs.foto || photoMap.get(normalizeName(bs.name)) || getDefaultProfileImage(g),
+      };
+    });
     achievements = dbPrestasi;
     announcements = dbAnnounce;
     prayerToday = dbPrayer;
 
     // Student identity info
-    studentImage = dbUser?.image || session.image || null;
+    studentImage = getUserProfileImage(dbUser?.image || session.image, dbUser?.gender || (session as any).gender);
     studentPoint = dbUser?.point || (session as any).point || "0";
     studentNis = dbUser?.nis || session.nis || "-";
     studentName = dbUser?.name || session.name || "Siswa";
@@ -239,20 +247,20 @@ export default async function SiswaDashboardPage() {
       </div>
 
       {/* Quick Action Banner: Status Sholat Hari Ini */}
-      <Card className="border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-background to-background shadow-sm overflow-hidden">
+      <Card className="border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20 overflow-hidden">
         <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-md">
+            <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
               <CheckCircle2 className="h-6 w-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-bold text-foreground">Mutaba&apos;ah Sholat Hari Ini</p>
-                <Badge className={completedPrayers === 6 ? "bg-emerald-600 font-mono text-xs" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-mono text-xs"}>
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-sm sm:text-base font-bold text-foreground">Mutaba&apos;ah Sholat Hari Ini</p>
+                <Badge className={completedPrayers === 6 ? "bg-emerald-600 font-mono text-xs px-2 py-0.5" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-mono text-xs px-2 py-0.5"}>
                   {completedPrayers}/6 Selesai
                 </Badge>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                 {completedPrayers === 6
                   ? "Alhamdulillah, seluruh checklist ibadah hari ini telah lengkap!"
                   : `Ada ${6 - completedPrayers} sholat yang belum dicatat. Sentuh tombol untuk mengisi.`
@@ -261,7 +269,7 @@ export default async function SiswaDashboardPage() {
             </div>
           </div>
           <Link href="/siswa/prayers" className="w-full sm:w-auto shrink-0">
-            <Button variant="launch" size="lg" className="w-full sm:w-auto">
+            <Button variant="default" size="default" className="w-full sm:w-auto">
               {completedPrayers === 6 ? "Lihat Catatan Sholat" : "Buka Checklist Sholat"}
             </Button>
           </Link>
@@ -276,6 +284,7 @@ export default async function SiswaDashboardPage() {
           icon={AlertTriangle}
           description="Total catatan kedisiplinan"
           variant={totalViolations > 0 ? "rose" : "emerald"}
+          href="/siswa/violations"
         />
         <StatCard
           title="Keterlambatan"
@@ -283,20 +292,25 @@ export default async function SiswaDashboardPage() {
           icon={Clock}
           description="Catatan hadir terlambat"
           variant={totalLateness > 0 ? "amber" : "blue"}
+          href="/siswa/lateness"
         />
         <StatCard
           title="Best Point"
           value={studentWithMaxPoints?.name ? studentWithMaxPoints.name.split(" ")[0] : "-"}
           icon={Trophy}
+          imageSrc="/images/best-point.avif"
           description={studentWithMaxPoints ? `${studentWithMaxPoints.point || 0} Poin Tertinggi` : "Belum ada poin"}
           variant="amber"
+          href="/siswa/best-point"
         />
         <StatCard
           title="Poin Saya"
           value={`${session.role === "siswa" ? (classmates.find((c) => c.id.toString() === session.id)?.point || "0") : "0"} Poin`}
           icon={Award}
+          imageSrc="/images/best-student.avif"
           description="Poin reward Anda"
           variant="purple"
+          href="/siswa/best-student"
         />
       </div>
 
@@ -304,11 +318,11 @@ export default async function SiswaDashboardPage() {
       <PrayerScheduleWidget />
 
       {/* 2 Columns: Announcements + Best Student / Prestasi */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Timeline Pengumuman */}
-        <div className="space-y-4 lg:col-span-7">
+        <div className="space-y-3.5 lg:col-span-7">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Pengumuman Sekolah & Kelas</h2>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Pengumuman Sekolah & Kelas</h2>
           </div>
           <AnnouncementTimeline
             announcements={formattedAnnouncements}
@@ -320,16 +334,16 @@ export default async function SiswaDashboardPage() {
         {/* Best Student Carousel & Prestasi Siswa */}
         <div className="space-y-6 lg:col-span-5">
           {/* Best Student Box */}
-          <Card className="border-purple-500/20 shadow-sm">
+          <Card className="border border-purple-500/20">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-purple-600" />
+                  <Award className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   <CardTitle className="text-base">Best Student Kelas</CardTitle>
                 </div>
                 <Link
                   href="/siswa/best-student"
-                  className="text-xs font-semibold text-purple-600 hover:underline"
+                  className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline"
                 >
                   Lihat Semua
                 </Link>
@@ -346,15 +360,15 @@ export default async function SiswaDashboardPage() {
                   {bestStudents.map((bs) => (
                     <div
                       key={bs.id.toString()}
-                      className="flex flex-col items-center justify-center rounded-xl border bg-card p-3 text-center transition-all hover:shadow-sm"
+                      className="flex flex-col items-center justify-center rounded-xl border bg-card p-3 text-center transition-all hover:shadow-xs"
                     >
                       <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-base mb-2 overflow-hidden border border-purple-200">
-                        {bs.foto ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={bs.foto} alt={bs.name} className="h-full w-full object-cover" />
-                        ) : (
-                          bs.name.substring(0, 2).toUpperCase()
-                        )}
+                        <UserAvatar
+                          src={bs.foto}
+                          gender={bs.gender}
+                          alt={bs.name}
+                          className="h-full w-full object-cover"
+                        />
                       </div>
                       <p className="font-bold text-xs truncate w-full">{bs.name}</p>
                       <Badge variant="secondary" className="mt-1 text-[10px] bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300 truncate w-full">
@@ -368,7 +382,7 @@ export default async function SiswaDashboardPage() {
           </Card>
 
           {/* Prestasi Siswa */}
-          <Card className="border-amber-500/20 shadow-sm">
+          <Card className="border border-amber-500/20">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-amber-500" />

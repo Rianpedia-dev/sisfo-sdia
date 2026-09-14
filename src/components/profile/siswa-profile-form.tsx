@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { updateStudentProfileAction } from "@/actions/siswa";
 import { toast } from "sonner";
+import { getDefaultProfileImage } from "@/lib/utils";
 
 interface SiswaProfileFormProps {
   student: {
@@ -35,8 +36,8 @@ export function SiswaProfileForm({ student }: SiswaProfileFormProps) {
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [isRemoved, setIsRemoved] = useState<boolean>(false);
 
-  const initials = student.name ? student.name.substring(0, 2).toUpperCase() : "SW";
-  const activeImage = isRemoved ? null : (previewUrl || student.image);
+  const defaultImage = getDefaultProfileImage(student.gender);
+  const activeImage = isRemoved ? defaultImage : (previewUrl || student.image || defaultImage);
 
   const handleFileChange = (file: File | null) => {
     if (!file) return;
@@ -124,16 +125,15 @@ export function SiswaProfileForm({ student }: SiswaProfileFormProps) {
           className="group relative flex h-20 w-20 shrink-0 cursor-pointer items-center justify-center rounded-2xl overflow-hidden border-2 border-emerald-400/50 bg-emerald-100 text-emerald-800 text-2xl font-bold dark:bg-emerald-950 dark:text-emerald-300 shadow-sm transition-all hover:scale-105 hover:ring-4 hover:ring-emerald-500/20"
           title="Klik untuk mengganti foto profil"
         >
-          {activeImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={activeImage}
-              alt={student.name}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          ) : (
-            <span>{initials}</span>
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={activeImage}
+            alt={student.name}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = defaultImage;
+            }}
+          />
 
           {/* Hover overlay with Camera */}
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/55 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 backdrop-blur-xs">

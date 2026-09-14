@@ -4,16 +4,18 @@ import React, { useRef, useState } from "react";
 import { Camera, Trash2, Undo2, Upload, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, getDefaultProfileImage } from "@/lib/utils";
 
 interface ProfilePhotoUploaderProps {
   currentImage?: string | null;
+  gender?: string | null;
   name: string;
   className?: string;
 }
 
 export function ProfilePhotoUploader({
   currentImage,
+  gender,
   name,
   className,
 }: ProfilePhotoUploaderProps) {
@@ -23,7 +25,8 @@ export function ProfilePhotoUploader({
   const [isRemoved, setIsRemoved] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const initials = name ? name.substring(0, 2).toUpperCase() : "US";
+  const defaultImage = getDefaultProfileImage(gender);
+  const activeImage = isRemoved ? defaultImage : (previewUrl || currentImage || defaultImage);
 
   const handleFileChange = (file: File | null) => {
     if (!file) return;
@@ -74,9 +77,6 @@ export function ProfilePhotoUploader({
     fileInputRef.current?.click();
   };
 
-  // Determine which image to display
-  const activeImage = isRemoved ? null : (previewUrl || currentImage);
-
   return (
     <div className={cn("flex flex-col sm:flex-row items-center gap-5 p-4 rounded-xl border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20", className)}>
       {/* Hidden inputs for form submission */}
@@ -125,21 +125,15 @@ export function ProfilePhotoUploader({
         )}
         title="Klik untuk memilih foto profil baru"
       >
-        {activeImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={activeImage}
-            alt={name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
-        ) : (
-          <span className="text-3xl font-extrabold tracking-tight">
-            {initials}
-          </span>
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={activeImage}
+          alt={name}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = defaultImage;
+          }}
+        />
 
         {/* Hover overlay with camera icon */}
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 backdrop-blur-xs">

@@ -4,6 +4,8 @@ import { getSession } from "@/lib/auth";
 import { Trophy, Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { LeaderboardPodium } from "@/components/ui/leaderboard-podium";
+import { UserAvatar } from "@/components/ui/user-avatar";
+import { getUserProfileImage, getDefaultProfileImage } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -72,7 +74,8 @@ export default async function GuruBestPointPage() {
                 userName: s.name,
                 rank: idx + 1,
                 value: parseInt(s.point || "0", 10) || 0,
-                avatarUrl: s.image || undefined,
+                avatarUrl: getUserProfileImage(s.image, s.gender),
+                gender: s.gender,
               }))}
               size="lg"
               medalStyle="modern"
@@ -121,7 +124,19 @@ export default async function GuruBestPointPage() {
                           idx + 1
                         )}
                       </TableCell>
-                      <TableCell className="font-semibold text-foreground">{s.name}</TableCell>
+                      <TableCell className="font-semibold text-foreground">
+                        <div className="flex items-center gap-2.5">
+                          <div className="h-8 w-8 rounded-full overflow-hidden border border-border shrink-0 bg-muted">
+                            <UserAvatar
+                              src={s.image}
+                              gender={s.gender}
+                              alt={s.name}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <span>{s.name}</span>
+                        </div>
+                      </TableCell>
                       <TableCell className="font-mono text-xs">{s.nis || "-"}</TableCell>
                       <TableCell className="text-center">{s.gender === "L" ? "L" : "P"}</TableCell>
                       <TableCell className="text-center">

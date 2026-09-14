@@ -63,3 +63,27 @@ export function getRoleLabel(status: string | number): string {
   if (s === "1") return "Siswa";
   return "Belum Terverifikasi";
 }
+
+/**
+ * Mendapatkan URL foto profil default berdasarkan gender:
+ * - Laki-laki ('L', 'laki-laki', 'pria', dll) -> /profil-default-laki-laki.avif
+ * - Perempuan ('P', 'perempuan', 'wanita', dll) -> /profil-default-perempuan.avif
+ */
+export function getDefaultProfileImage(gender?: string | null): string {
+  if (!gender) return "/profil-default-laki-laki.avif";
+  const g = String(gender).trim().toUpperCase();
+  if (g === "P" || g === "PEREMPUAN" || g === "WANITA" || g === "F" || g === "FEMALE") {
+    return "/profil-default-perempuan.avif";
+  }
+  return "/profil-default-laki-laki.avif";
+}
+
+/**
+ * Mengembalikan foto profil jika pengguna sudah mengunggah, atau foto default sesuai gender jika belum update.
+ */
+export function getUserProfileImage(image?: string | null, gender?: string | null): string {
+  if (image && typeof image === "string" && image.trim() !== "" && image !== "null" && image !== "undefined") {
+    return image;
+  }
+  return getDefaultProfileImage(gender);
+}

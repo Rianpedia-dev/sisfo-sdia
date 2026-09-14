@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Menu, Maximize2, Minimize2, Bell, User, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +43,7 @@ export function Navbar({ role, userName, userEmail, kelas, userImage }: NavbarPr
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background/80 px-4 backdrop-blur-md sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border/80 bg-background/95 px-4 backdrop-blur-md sm:px-6">
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Desktop Sidebar Toggle */}
         <Button
@@ -83,10 +84,10 @@ export function Navbar({ role, userName, userEmail, kelas, userImage }: NavbarPr
 
         {/* Academic Year Info Banner */}
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Badge variant="outline" className="border-emerald-600/30 bg-emerald-50 text-emerald-800 text-[11px] sm:text-xs py-0.5 px-2 dark:bg-emerald-950/40 dark:text-emerald-300 font-medium">
+          <Badge variant="outline" className="border-emerald-600/30 bg-emerald-50 text-emerald-800 text-xs py-0.5 px-2.5 dark:bg-emerald-950/40 dark:text-emerald-300 font-medium">
             TP {academic.tahunPelajaran}
           </Badge>
-          <Badge variant="secondary" className="hidden sm:inline-flex text-[11px] sm:text-xs py-0.5 px-2">
+          <Badge variant="secondary" className="hidden sm:inline-flex text-xs py-0.5 px-2.5 font-medium">
             {academic.semester}
           </Badge>
         </div>
@@ -115,36 +116,44 @@ export function Navbar({ role, userName, userEmail, kelas, userImage }: NavbarPr
           <Bell className="h-4 w-4" />
         </Button>
 
-        {/* Role & User info */}
-        <div
-          className="flex items-center gap-2 sm:gap-3 pl-1.5 sm:pl-2.5 border-l"
-          title={`${userName} • ${getRoleLabel(role === "admin" ? "3" : role === "guru" ? "4" : "1")}`}
-        >
-          <div className="hidden text-right md:block">
-            <p className="text-sm font-semibold leading-none truncate max-w-[140px] lg:max-w-[200px]">{userName}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {getRoleLabel(role === "admin" ? "3" : role === "guru" ? "4" : "1")}
-            </p>
-          </div>
-          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 ring-2 ring-emerald-600/20 dark:bg-emerald-900/50 dark:text-emerald-200 overflow-hidden font-bold text-xs">
-            {userImage ? (
-              <>
-                <span>{userName ? userName.substring(0, 2).toUpperCase() : <User className="h-4 w-4" />}</span>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={userImage}
-                  alt={userName}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              </>
-            ) : (
-              userName ? userName.substring(0, 2).toUpperCase() : <User className="h-4 w-4" />
-            )}
-          </div>
-        </div>
+        {/* Role & User info / Profile Link */}
+        {(() => {
+          const profileHref = role === "guru" ? "/guru/profile" : role === "siswa" ? "/siswa/profile" : "/admin";
+          return (
+            <Link
+              href={profileHref}
+              className="group flex items-center gap-2.5 sm:gap-3 pl-2 sm:pl-3 border-l border-border/70 cursor-pointer rounded-lg py-1 px-1.5 -mr-1.5 transition-all duration-200 hover:bg-muted/60 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500"
+              title={`Lihat Profil • ${userName} (${getRoleLabel(role === "admin" ? "3" : role === "guru" ? "4" : "1")})`}
+            >
+              <div className="hidden text-right md:block">
+                <p className="text-sm font-semibold leading-none truncate max-w-[140px] lg:max-w-[200px] text-foreground group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                  {userName}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {getRoleLabel(role === "admin" ? "3" : role === "guru" ? "4" : "1")}
+                </p>
+              </div>
+              <div className="relative flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 ring-2 ring-emerald-600/20 group-hover:ring-emerald-600/60 dark:bg-emerald-900/50 dark:text-emerald-200 overflow-hidden font-bold text-xs shadow-xs transition-all duration-200 group-hover:scale-105">
+                {userImage ? (
+                  <>
+                    <span>{userName ? userName.substring(0, 2).toUpperCase() : <User className="h-4 w-4" />}</span>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={userImage}
+                      alt={userName}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  </>
+                ) : (
+                  userName ? userName.substring(0, 2).toUpperCase() : <User className="h-4 w-4" />
+                )}
+              </div>
+            </Link>
+          );
+        })()}
       </div>
     </header>
   );

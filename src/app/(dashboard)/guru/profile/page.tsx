@@ -56,6 +56,7 @@ export default async function GuruProfilePage() {
     guru_bidang: teacher.guru_bidang || null,
     kelas: teacher.kelas || null,
     address: teacher.address || null,
+    gender: teacher.gender || (session as any).gender || null,
     image: teacher.image || null,
   };
 

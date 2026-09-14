@@ -56,13 +56,13 @@ export default async function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header Page */}
       <div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           Dashboard Administrator
         </h1>
-        <p className="text-base text-muted-foreground mt-1 font-normal">
+        <p className="text-sm sm:text-base text-muted-foreground mt-1 font-normal">
           Selamat datang di panel kontrol Sistem Informasi SD Islam Al-Azhar Cairo Palembang.
         </p>
       </div>
@@ -73,8 +73,10 @@ export default async function AdminDashboardPage() {
           title="Jumlah Siswa"
           value={totalSiswa}
           icon={GraduationCap}
+          imageSrc="/images/siswa.avif"
           description="Total siswa aktif"
           variant="emerald"
+          href="/admin/students"
         />
         <StatCard
           title="Jumlah Guru"
@@ -82,6 +84,7 @@ export default async function AdminDashboardPage() {
           icon={Users}
           description="Total dewan pengajar"
           variant="blue"
+          href="/admin/teachers"
         />
         <StatCard
           title="Akun Aktif"
@@ -89,6 +92,7 @@ export default async function AdminDashboardPage() {
           icon={UserCheck}
           description="Pengguna terverifikasi"
           variant="amber"
+          href="/admin/students"
         />
         <StatCard
           title="Akun Non-Aktif"
@@ -96,15 +100,16 @@ export default async function AdminDashboardPage() {
           icon={UserX}
           description="Menunggu verifikasi admin"
           variant="rose"
+          href="/admin/students"
         />
       </div>
 
       {/* Grid: Pengumuman (7 col) & Kalender (5 col) */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Timeline Pengumuman */}
-        <div className="space-y-4 lg:col-span-7">
+        <div className="space-y-3.5 lg:col-span-7">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Timeline Pengumuman</h2>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Timeline Pengumuman</h2>
           </div>
           <AnnouncementTimeline
             announcements={formattedAnnouncements}
@@ -114,19 +119,19 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Kalender Kegiatan */}
-        <div className="space-y-4 lg:col-span-5">
+        <div className="space-y-3.5 lg:col-span-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Kalender Kegiatan</h2>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Kalender Kegiatan</h2>
           </div>
           <CalendarWidget canManage={true} />
         </div>
       </div>
 
       {/* Tabel Code Restrict */}
-      <div className="space-y-4">
+      <div className="space-y-3.5">
         <div className="flex items-center gap-2">
-          <ShieldAlert className="h-6 w-6 text-emerald-600" />
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Kode Restrict iPad per Kelas</h2>
+          <ShieldAlert className="h-5 w-5 text-emerald-600" />
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Kode Restrict iPad per Kelas</h2>
         </div>
         <AdminRestrictTable initialData={formattedRestricts} />
       </div>

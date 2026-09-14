@@ -176,8 +176,8 @@ export function Sidebar({ role, onNavigate, forceExpanded = false }: SidebarProp
                         className={cn(
                           "flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-150 relative group",
                           isActive
-                            ? "bg-emerald-500 text-white font-semibold shadow-md shadow-emerald-950/40 ring-1 ring-emerald-300/40"
-                            : "text-emerald-100/70 hover:bg-emerald-800/40 hover:text-white"
+                            ? "bg-emerald-600 text-white font-medium shadow-xs ring-1 ring-white/15"
+                            : "text-emerald-100/75 hover:bg-white/10 hover:text-white"
                         )}
                         aria-label={item.label}
                       >
@@ -202,13 +202,13 @@ export function Sidebar({ role, onNavigate, forceExpanded = false }: SidebarProp
                 href={item.href}
                 onClick={onNavigate}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] transition-all duration-150",
+                  "flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-all duration-150",
                   isActive
-                    ? "bg-emerald-500 text-white font-semibold shadow-md shadow-emerald-950/40"
-                    : "text-emerald-100/70 font-medium hover:bg-emerald-800/40 hover:text-white"
+                    ? "bg-emerald-600 text-white font-medium shadow-xs ring-1 ring-white/15"
+                    : "text-emerald-100/75 font-normal hover:bg-white/10 hover:text-white"
                 )}
               >
-                <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-emerald-400")} />
+                <Icon className={cn("h-4.5 w-4.5 shrink-0", isActive ? "text-white" : "text-emerald-300")} />
                 <span className="truncate">{item.label}</span>
               </Link>
             );

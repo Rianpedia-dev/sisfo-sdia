@@ -57,6 +57,7 @@ export default async function GuruMyClassPage() {
       address: s.address,
       skills: s.skills,
       notes: s.notes,
+      image: s.image,
       prayerToday: prayerMap.get(s.id.toString()) || null,
     }));
 

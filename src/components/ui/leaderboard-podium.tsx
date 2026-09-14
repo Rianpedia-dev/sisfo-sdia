@@ -13,7 +13,9 @@ interface LeaderboardRanking {
   rank: number
   value: number
   avatarUrl?: string | null
+  gender?: string | null
 }
+
 
 // Variants
 const podiumVariants = cva("flex items-end justify-center", {
@@ -156,9 +158,11 @@ const LeaderboardPodium = React.forwardRef<
 
           const displayName =
             ranking.userName || `User ${ranking.userId.slice(0, 6)}`
-          const avatarSrc =
-            ranking.avatarUrl ||
-            `https://i.pravatar.cc/96?u=${encodeURIComponent(ranking.userId)}`
+          const defaultAvatar =
+            ranking.gender === "P" || ranking.gender?.toLowerCase() === "perempuan"
+              ? "/profil-default-perempuan.avif"
+              : "/profil-default-laki-laki.avif"
+          const avatarSrc = ranking.avatarUrl || defaultAvatar
 
           const podiumHeight = {
             sm: config.heightSm,
@@ -193,7 +197,7 @@ const LeaderboardPodium = React.forwardRef<
                     alt={`${displayName} avatar`}
                     className={cn("rounded-full object-cover transition-transform duration-200 hover:scale-105", avatarSize)}
                     onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&color=fff`
+                      (e.currentTarget as HTMLImageElement).src = defaultAvatar
                     }}
                   />
                 ) : (

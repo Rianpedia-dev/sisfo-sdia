@@ -12,7 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatDateIndo } from "@/lib/utils";
+import { UserAvatar } from "@/components/ui/user-avatar";
+import { formatDateIndo, getUserProfileImage, getDefaultProfileImage } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -37,17 +38,19 @@ export default async function SiswaBestStudentPage() {
       studentClass
         ? prisma.user.findMany({
             where: { kelas: studentClass, status: "1" },
-            select: { name: true, image: true },
+            select: { name: true, image: true, gender: true },
           })
         : [],
     ]);
 
     const normalizeName = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
     const photoMap = new Map<string, string | null>();
+    const genderMap = new Map<string, string | null>();
     studentUsers.forEach((u) => {
       if (u.image) {
         photoMap.set(normalizeName(u.name), u.image);
       }
+      genderMap.set(normalizeName(u.name), u.gender);
     });
 
     const missingNames = dbBest
@@ -57,17 +60,22 @@ export default async function SiswaBestStudentPage() {
     if (missingNames.length > 0) {
       const extraUsers = await prisma.user.findMany({
         where: { name: { in: missingNames }, status: "1" },
-        select: { name: true, image: true },
+        select: { name: true, image: true, gender: true },
       });
       extraUsers.forEach((u) => {
         if (u.image) photoMap.set(normalizeName(u.name), u.image);
+        genderMap.set(normalizeName(u.name), u.gender);
       });
     }
 
-    bestStudents = dbBest.map((bs) => ({
-      ...bs,
-      foto: bs.foto || photoMap.get(normalizeName(bs.name)) || null,
-    }));
+    bestStudents = dbBest.map((bs) => {
+      const g = genderMap.get(normalizeName(bs.name));
+      return {
+        ...bs,
+        gender: g,
+        foto: getUserProfileImage(bs.foto || photoMap.get(normalizeName(bs.name)), g),
+      };
+    });
   } catch (e) {
     console.error("Database query error in siswa best-student:", e);
   }
@@ -93,12 +101,12 @@ export default async function SiswaBestStudentPage() {
             <Card key={bs.id.toString()} className="border-purple-500/20 bg-gradient-to-br from-purple-500/10 via-background to-background text-center shadow-sm">
             <CardContent className="p-6 flex flex-col items-center">
               <div className="h-16 w-16 rounded-full bg-purple-100 flex items-center justify-center text-purple-800 text-2xl font-bold border-2 border-purple-300 shadow-inner overflow-hidden mb-3">
-                {bs.foto ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={bs.foto} alt={bs.name} className="h-full w-full object-cover" />
-                ) : (
-                  bs.name.substring(0, 2).toUpperCase()
-                )}
+                <UserAvatar
+                  src={bs.foto}
+                  gender={bs.gender}
+                  alt={bs.name}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <h3 className="font-bold text-base text-foreground">{bs.name}</h3>
               <Badge className="mt-1 bg-purple-600 text-white text-xs">
@@ -143,12 +151,12 @@ export default async function SiswaBestStudentPage() {
                       <TableCell className="text-center font-medium">{idx + 1}</TableCell>
                       <TableCell className="text-center">
                         <div className="h-9 w-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-xs mx-auto overflow-hidden">
-                          {bs.foto ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={bs.foto} alt={bs.name} className="h-full w-full object-cover" />
-                          ) : (
-                            bs.name.substring(0, 2).toUpperCase()
-                          )}
+                          <UserAvatar
+                            src={bs.foto}
+                            gender={bs.gender}
+                            alt={bs.name}
+                            className="h-full w-full object-cover"
+                          />
                         </div>
                       </TableCell>
                       <TableCell className="font-semibold text-foreground">{bs.name}</TableCell>

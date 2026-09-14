@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { GlassFilter } from "@/components/ui/card";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -34,7 +33,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         {children}
         <Toaster richColors position="top-right" />
-        <GlassFilter />
       </body>
     </html>
   );

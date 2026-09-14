@@ -170,31 +170,41 @@
     @apply font-sans text-[13px] sm:text-sm font-normal text-muted-foreground;
   }
 
-  /* Liquid Glass Rim Light & Specular Shadows */
-  .shadow-liquid-glass {
-    box-shadow:
-      0 0 6px rgba(0, 0, 0, 0.03),
-      0 2px 6px rgba(0, 0, 0, 0.08),
-      inset 3px 3px 0.5px -3px rgba(0, 0, 0, 0.9),
-      inset -3px -3px 0.5px -3px rgba(0, 0, 0, 0.85),
-      inset 1px 1px 1px -0.5px rgba(0, 0, 0, 0.6),
-      inset -1px -1px 1px -0.5px rgba(0, 0, 0, 0.6),
-      inset 0 0 6px 6px rgba(0, 0, 0, 0.12),
-      inset 0 0 2px 2px rgba(0, 0, 0, 0.06),
-      0 0 12px rgba(255, 255, 255, 0.15);
+  /* Card Elevation — Clean Professional Modern Elevation */
+  .card-elevation {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05),
+                0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.2s ease;
   }
 
-  .dark .shadow-liquid-glass {
-    box-shadow:
-      0 0 8px rgba(0, 0, 0, 0.03),
-      0 2px 6px rgba(0, 0, 0, 0.08),
-      inset 3px 3px 0.5px -3.5px rgba(255, 255, 255, 0.09),
-      inset -3px -3px 0.5px -3.5px rgba(255, 255, 255, 0.85),
-      inset 1px 1px 1px -0.5px rgba(255, 255, 255, 0.6),
-      inset -1px -1px 1px -0.5px rgba(255, 255, 255, 0.6),
-      inset 0 0 6px 6px rgba(255, 255, 255, 0.12),
-      inset 0 0 2px 2px rgba(255, 255, 255, 0.06),
-      0 0 12px rgba(0, 0, 0, 0.15);
+  .card-elevation-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06),
+                0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  /* Compact card shadow — for small/stat cards */
+  .card-elevation-sm {
+    border-radius: 0.875rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  }
+
+  :is(.dark) .card-elevation {
+    background-color: var(--card);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3),
+                0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  }
+  :is(.dark) .card-elevation-hover:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4),
+                0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    border-color: rgba(52, 211, 153, 0.3);
   }
 
   /* 3D Tactile Launch Button Utilities */

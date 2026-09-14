@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
@@ -19,6 +18,7 @@ import {
   Sparkles,
   HelpCircle,
   AlertTriangle,
+  ScreenShare,
 } from "lucide-react";
 
 interface ClassroomHelpModalProps {
@@ -30,9 +30,9 @@ interface ClassroomHelpModalProps {
 export function ClassroomHelpModal({
   isOpen,
   onClose,
-  role = "siswa",
+  role: _role = "siswa",
 }: ClassroomHelpModalProps) {
-  const [activeTab, setActiveTab] = useState<"step" | "permission" | "adab">("step");
+  const [activeTab, setActiveTab] = useState<"step" | "permission" | "share" | "adab">("step");
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -55,20 +55,20 @@ export function ClassroomHelpModal({
           </div>
 
           {/* Navigation Pills */}
-          <div className="flex gap-2 mt-5 p-1 bg-black/15 rounded-xl backdrop-blur-sm">
+          <div className="flex gap-1.5 sm:gap-2 mt-5 p-1 bg-black/15 rounded-xl backdrop-blur-sm overflow-x-auto">
             <button
               onClick={() => setActiveTab("step")}
-              className={`flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+              className={`flex-1 min-w-[100px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
                 activeTab === "step"
                   ? "bg-white text-emerald-800 shadow-sm"
                   : "text-emerald-100 hover:bg-white/10"
               }`}
             >
-              🚀 Cara Masuk Kelas
+              🚀 Masuk Kelas
             </button>
             <button
               onClick={() => setActiveTab("permission")}
-              className={`flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+              className={`flex-1 min-w-[100px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
                 activeTab === "permission"
                   ? "bg-white text-emerald-800 shadow-sm"
                   : "text-emerald-100 hover:bg-white/10"
@@ -77,8 +77,18 @@ export function ClassroomHelpModal({
               🔒 Kamera & Suara
             </button>
             <button
+              onClick={() => setActiveTab("share")}
+              className={`flex-1 min-w-[100px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                activeTab === "share"
+                  ? "bg-white text-emerald-800 shadow-sm"
+                  : "text-emerald-100 hover:bg-white/10"
+              }`}
+            >
+              🖥️ Bagikan Layar
+            </button>
+            <button
               onClick={() => setActiveTab("adab")}
-              className={`flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+              className={`flex-1 min-w-[100px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
                 activeTab === "adab"
                   ? "bg-white text-emerald-800 shadow-sm"
                   : "text-emerald-100 hover:bg-white/10"
@@ -188,6 +198,52 @@ export function ClassroomHelpModal({
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Pastikan volume speaker laptop atau HP Anda tidak dalam posisi bisu (Mute) dan headset terpasang dengan erat.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "share" && (
+            <div className="space-y-3">
+              <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 rounded-xl p-4">
+                <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-200 flex items-center gap-2">
+                  <ScreenShare className="h-4 w-4 text-emerald-600" />
+                  Cara Berbagi Layar (Bisa di Laptop, Tablet, & Smartphone):
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Fitur ini memungkinkan Ustadz/Ustadzah atau siswa mempresentasikan materi pelajaran, gambar tugas, atau dokumen ke seluruh kelas.
+                </p>
+              </div>
+
+              <div className="grid gap-3">
+                <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                  <h4 className="font-semibold text-sm flex items-center gap-2 text-foreground mb-1">
+                    <span className="h-6 w-6 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-xs text-emerald-700 font-bold">1</span>
+                    Di Laptop / Komputer (Desktop)
+                  </h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Klik tombol hijau <strong>&quot;Bagikan Layar&quot;</strong> di bar atas atau di bar bawah video. Pilih <strong>Seluruh Layar</strong> (*Entire Screen*), <strong>Jendela Aplikasi</strong> (misal PowerPoint), atau <strong>Tab Browser</strong>.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                  <h4 className="font-semibold text-sm flex items-center gap-2 text-foreground mb-1">
+                    <span className="h-6 w-6 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-xs text-emerald-700 font-bold">2</span>
+                    Di Tablet & Smartphone (Android / iPad)
+                  </h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Klik tombol <strong>&quot;Bagikan Layar&quot;</strong> di bar atas. Saat muncul permintaan izin dari browser atau sistem (misal &quot;Mulai Merekam&quot; / *Start now*), pilih <strong>Mulai</strong>. Layar tablet/HP Anda akan langsung terlihat oleh semua peserta kelas.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl border border-amber-200 dark:border-amber-800/40 bg-amber-50/50 dark:bg-amber-950/20">
+                  <h4 className="font-semibold text-sm flex items-center gap-2 text-amber-900 dark:text-amber-200 mb-1">
+                    <span className="h-6 w-6 rounded-full bg-amber-200/80 dark:bg-amber-900/50 flex items-center justify-center text-xs text-amber-800 font-bold">3</span>
+                    Cara Berhenti Berbagi
+                  </h4>
+                  <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+                    Cukup klik tombol merah <strong>&quot;Berhenti Berbagi&quot;</strong> yang sedang berkedip di bar atas, atau tekan tombol &quot;Stop sharing&quot; pada notifikasi sistem layar HP/laptop Anda.
                   </p>
                 </div>
               </div>

@@ -77,11 +77,11 @@ export function AnnouncementTimeline({
 
   if (!items || items.length === 0) {
     return (
-      <Card className="border-dashed py-0 gap-0">
+      <Card className="border-dashed">
         <CardContent className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
           <Megaphone className="h-10 w-10 text-muted-foreground/40 mb-3" />
-          <p className="font-medium">Belum ada pengumuman.</p>
-          <p className="text-xs mt-1">Pengumuman terbaru dari sekolah akan ditampilkan di sini.</p>
+          <p className="font-semibold text-sm">Belum ada pengumuman.</p>
+          <p className="text-xs mt-1 text-muted-foreground">Pengumuman terbaru dari sekolah akan ditampilkan di sini.</p>
         </CardContent>
       </Card>
     );
@@ -90,21 +90,21 @@ export function AnnouncementTimeline({
   return (
     <div className="space-y-4">
       {items.map((item) => (
-        <Card key={item.id} className="relative overflow-hidden py-0 gap-0 border-l-4 border-l-emerald-600 transition-all duration-300 hover:scale-[1.005]">
-          <CardContent className="p-5">
+        <Card key={item.id} className="relative overflow-hidden border-l-4 border-l-emerald-600 transition-all duration-200 hover:shadow-md">
+          <CardContent className="p-4 sm:p-5.5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge variant="secondary" className="bg-emerald-50 text-emerald-800 border-emerald-200/50 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/40 text-xs font-medium">
                   {item.from || "Pengumuman"}
                 </Badge>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Calendar className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
                   <span>{formatDateIndo(item.created_at)}</span>
                 </div>
               </div>
 
               {canManage && (
-                <div className="flex items-center gap-1.5 self-end sm:self-auto">
+                <div className="flex items-center gap-1 self-end sm:self-auto">
                   <Link href={`/${userRole}/announcements/${item.id}`}>
                     <Button variant="ghost" size="icon-sm" className="h-8 w-8 text-muted-foreground hover:text-foreground">
                       <Edit className="h-3.5 w-3.5" />
@@ -122,26 +122,26 @@ export function AnnouncementTimeline({
               )}
             </div>
 
-            <h3 className="mt-3 text-lg font-bold tracking-tight text-foreground">
+            <h3 className="mt-2.5 text-base sm:text-lg font-bold tracking-tight text-foreground">
               {item.title}
             </h3>
 
             {/* Konten Pengumuman */}
             <div
-              className="prose prose-emerald dark:prose-invert mt-2 max-w-none text-sm text-muted-foreground leading-relaxed"
+              className="prose prose-emerald dark:prose-invert mt-2 max-w-none text-sm text-slate-600 dark:text-slate-300 leading-relaxed break-words"
               dangerouslySetInnerHTML={{ __html: item.pengumuman }}
             />
 
             {/* Lampiran file */}
             {item.file && (
-              <div className="mt-4 flex items-center gap-2 rounded-lg border bg-muted/40 p-2.5 text-xs text-foreground">
-                <FileText className="h-4 w-4 text-emerald-600" />
+              <div className="mt-3.5 flex items-center gap-2 rounded-xl border bg-muted/40 p-2.5 text-xs text-foreground">
+                <FileText className="h-4 w-4 text-emerald-600 shrink-0" />
                 <span className="font-medium">Lampiran Dokumen:</span>
                 <a
                   href={item.file}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-emerald-600 hover:underline"
+                  className="font-medium text-emerald-600 hover:underline truncate"
                 >
                   Unduh / Lihat File
                 </a>
@@ -149,7 +149,7 @@ export function AnnouncementTimeline({
             )}
 
             {/* Like Counter & Action */}
-            <div className="mt-4 flex items-center gap-2 border-t pt-3">
+            <div className="mt-3.5 flex items-center gap-2 border-t pt-2.5">
               <Button
                 variant="ghost"
                 size="sm"
