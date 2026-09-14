@@ -82,6 +82,7 @@ export default async function AdminDashboardPage() {
           title="Jumlah Guru"
           value={totalGuru}
           icon={Users}
+          imageSrc="/images/guru.avif"
           description="Total dewan pengajar"
           variant="blue"
           href="/admin/teachers"
@@ -90,6 +91,7 @@ export default async function AdminDashboardPage() {
           title="Akun Aktif"
           value={totalAktif}
           icon={UserCheck}
+          imageSrc="/images/akun-aktif.avif"
           description="Pengguna terverifikasi"
           variant="amber"
           href="/admin/students"
@@ -98,6 +100,7 @@ export default async function AdminDashboardPage() {
           title="Akun Non-Aktif"
           value={totalNonAktif}
           icon={UserX}
+          imageSrc="/images/akun-non-aktif.avif"
           description="Menunggu verifikasi admin"
           variant="rose"
           href="/admin/students"
