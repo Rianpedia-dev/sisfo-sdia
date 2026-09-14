@@ -5,7 +5,6 @@ import { getSession } from "@/lib/auth";
 import { ArrowLeft, Table as TableIcon, Download, ChevronLeft, ChevronRight, School } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getAcademicYear } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +18,6 @@ export default async function GuruAttendanceTablePage(props: {
 
   const { date } = await props.params;
   const guruClass = session.kelas || "";
-  const academic = getAcademicYear();
 
   // Parse Year and Month from the URL param date (e.g. 2026-09-10)
   const [yearStr, monthStr] = date.split("-");
@@ -112,10 +110,6 @@ export default async function GuruAttendanceTablePage(props: {
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-emerald-600/30 bg-emerald-50 text-emerald-800 text-xs py-1 px-2.5 dark:bg-emerald-950 dark:text-emerald-300">
-            TP {academic.tahunPelajaran} • {academic.semester}
-          </Badge>
-
           <Link href="/guru/attendance/recap">
             <Button size="sm" variant="outline" className="gap-1.5 text-xs text-emerald-700 border-emerald-600">
               <Download className="h-3.5 w-3.5" /> Download PDF

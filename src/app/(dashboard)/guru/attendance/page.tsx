@@ -5,8 +5,6 @@ import { getSession } from "@/lib/auth";
 import { Table as TableIcon, FileText, Calendar as CalendarIcon, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { getAcademicYear } from "@/lib/utils";
 import { AttendanceCalendarClient } from "./attendance-calendar-client";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +16,6 @@ export default async function GuruAttendancePage() {
   }
 
   const guruClass = session.kelas || "";
-  const academic = getAcademicYear();
   const now = new Date();
   const todayFormatted = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
@@ -40,22 +37,8 @@ export default async function GuruAttendancePage() {
   return (
     <div className="space-y-6">
       {/* Header Info */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Presensi Absensi Kelas</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Pilih tanggal pada kalender untuk mengisi atau memperbarui kehadiran siswa kelas {guruClass}.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-emerald-600/30 bg-emerald-50 text-emerald-800 text-xs py-1 px-2.5 dark:bg-emerald-950 dark:text-emerald-300">
-            TP {academic.tahunPelajaran}
-          </Badge>
-          <Badge className="bg-emerald-600 text-xs py-1 px-2.5">
-            {academic.semester}
-          </Badge>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Presensi Absensi Kelas</h1>
       </div>
 
       {/* Quick Navigation Cards */}

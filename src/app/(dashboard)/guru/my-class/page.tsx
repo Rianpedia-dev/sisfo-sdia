@@ -2,9 +2,6 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { MyClassTable } from "./my-class-table";
-import { School, Calendar, BookOpen } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { getAcademicYear } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +12,6 @@ export default async function GuruMyClassPage() {
   }
 
   const guruClass = session.kelas || "";
-  const academic = getAcademicYear();
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
@@ -82,23 +78,8 @@ export default async function GuruMyClassPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Academic Year & Semester per PRD Section 18 */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Kelas Saya: {guruClass || "(Belum ada kelas)"}</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Kelola murid, pantau checklist sholat harian, dan berikan reward poin kedisiplinan.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-emerald-600/30 bg-emerald-50 text-emerald-800 text-xs py-1 px-2.5 dark:bg-emerald-950 dark:text-emerald-300">
-            Tahun Pelajaran {academic.tahunPelajaran}
-          </Badge>
-          <Badge className="bg-emerald-600 text-xs py-1 px-2.5">
-            {academic.semester}
-          </Badge>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Kelas Saya: {guruClass || "(Belum ada kelas)"}</h1>
       </div>
 
       <MyClassTable

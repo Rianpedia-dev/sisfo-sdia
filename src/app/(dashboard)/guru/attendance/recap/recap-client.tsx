@@ -193,7 +193,7 @@ export function RecapClient({
             Rekapitulasi Bulan {monthNames[selectedMonth]} {currentYear}
           </CardTitle>
           <CardDescription>
-            Ringkasan kehadiran siswa kelas {guruClass} (Tahun Pelajaran {tahunPelajaran} • {semester})
+            Ringkasan kehadiran siswa kelas {guruClass}
           </CardDescription>
         </CardHeader>
         <CardContent>
