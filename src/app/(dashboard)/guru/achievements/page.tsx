@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { Plus, Trash2, Trophy } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -45,20 +45,14 @@ export default async function GuruAchievementsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Prestasi & Kejuaraan Siswa</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Catat pencapaian lomba, kejuaraan tahfidz, sains, olahraga, dan seni siswa SDIA Cairo.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         {/* Form Tambah Prestasi (4 Cols) */}
         <div className="lg:col-span-4">
-          <Card className="border-amber-500/20 shadow-sm sticky top-20">
+          <Card className="border-amber-500/20 shadow-sm sticky top-20 rounded-xl">
             <CardHeader>
               <CardTitle className="text-base">Catat Prestasi Baru</CardTitle>
-              <CardDescription>
-                Prestasi akan ditampilkan di etalase dashboard siswa & guru.
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <form
@@ -126,7 +120,7 @@ export default async function GuruAchievementsPage() {
           <h2 className="text-lg font-bold">Daftar Prestasi Terkini ({achievements.length})</h2>
 
           {achievements.length === 0 ? (
-            <Card className="border-dashed">
+            <Card className="border-dashed rounded-xl">
               <CardContent className="p-8 text-center text-muted-foreground">
                 <Trophy className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
                 <p>Belum ada catatan prestasi siswa yang dimasukkan.</p>
@@ -135,7 +129,7 @@ export default async function GuruAchievementsPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {achievements.map((ach) => (
-                <Card key={ach.id.toString()} className="border-amber-500/20 shadow-sm overflow-hidden">
+                <Card key={ach.id.toString()} className="border-amber-500/20 shadow-sm overflow-hidden rounded-xl">
                   <CardContent className="p-5 flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0">
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-800 text-xl font-bold dark:bg-amber-950 dark:text-amber-300">

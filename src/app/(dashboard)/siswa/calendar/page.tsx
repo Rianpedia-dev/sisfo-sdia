@@ -16,9 +16,6 @@ export default async function SiswaCalendarPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight">Kalender Kegiatan Sekolah</h1>
-        <p className="text-sm text-muted-foreground">
-          Agenda kegiatan akademik, jadwal ujian, field trip, dan hari libur sekolah SDIA Cairo ({siswaClass}).
-        </p>
       </div>
 
       <div className="w-full">

@@ -7,11 +7,23 @@ import { cn } from "@/lib/utils";
 export interface LaunchButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
-  variant?: "amber" | "emerald" | "rose" | "dark";
+  variant?: "amber" | "emerald" | "rose" | "dark" | "crimson" | "steel";
   size?: "sm" | "default" | "lg";
 }
 
 const variantStyles = {
+  crimson: {
+    glow: "bg-primary/40",
+    surface:
+      "bg-gradient-to-b from-red-400 via-red-600 to-red-800 text-white shadow-[0_0_0_1px_rgba(239,83,80,0.5),0_4px_0_#7f0000,0_10px_15px_-3px_rgba(0,0,0,0.5)] active:shadow-[0_0_0_1px_rgba(239,83,80,0.5),0_2px_0_#7f0000]",
+    defaultIconColor: "fill-white/20 stroke-[1.5]",
+  },
+  steel: {
+    glow: "bg-accent/40",
+    surface:
+      "bg-gradient-to-b from-sky-400 via-sky-600 to-blue-800 text-white shadow-[0_0_0_1px_rgba(100,181,246,0.5),0_4px_0_#1e3a8a,0_10px_15px_-3px_rgba(0,0,0,0.5)] active:shadow-[0_0_0_1px_rgba(100,181,246,0.5),0_2px_0_#1e3a8a]",
+    defaultIconColor: "fill-white/20 stroke-[1.5]",
+  },
   amber: {
     glow: "bg-amber-500/40",
     surface:
@@ -40,18 +52,18 @@ const variantStyles = {
 
 const sizeStyles = {
   sm: {
-    surface: "px-4 py-2 text-sm gap-2 rounded-lg",
-    glow: "rounded-lg",
+    surface: "px-4 py-2 text-sm gap-2 rounded-[var(--radius)]",
+    glow: "rounded-[var(--radius)]",
     iconSize: "w-4 h-4",
   },
   default: {
-    surface: "px-8 py-4 text-lg gap-3 rounded-xl",
-    glow: "rounded-xl",
+    surface: "px-8 py-4 text-lg gap-3 rounded-[var(--radius)]",
+    glow: "rounded-[var(--radius)]",
     iconSize: "w-5 h-5",
   },
   lg: {
-    surface: "px-10 py-5 text-xl gap-3.5 rounded-2xl",
-    glow: "rounded-2xl",
+    surface: "px-10 py-5 text-xl gap-3.5 rounded-[var(--radius)]",
+    glow: "rounded-[var(--radius)]",
     iconSize: "w-6 h-6",
   },
 };

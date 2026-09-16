@@ -60,8 +60,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session || (session.role !== "admin" && session.role !== "guru")) {
+    return NextResponse.json(
+      { error: "Akses ditolak: Siswa tidak memiliki izin membuat kegiatan kalender" },
+      { status: 403 }
+    );
   }
 
   try {

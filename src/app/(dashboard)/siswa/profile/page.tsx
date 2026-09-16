@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { Trophy, Sparkles } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateIndo } from "@/lib/utils";
 import { SiswaProfileForm } from "@/components/profile/siswa-profile-form";
 
@@ -70,15 +70,12 @@ export default async function SiswaProfilePage() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Profil Siswa</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Informasi biodata, keterampilan, catatan kepribadian, dan koleksi prestasi Anda.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Profile Card & Edit Form (2 Cols) */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="border-emerald-500/20 shadow-sm overflow-hidden">
+          <Card className="shadow-sm overflow-hidden">
             <SiswaProfileForm student={formattedStudent} />
           </Card>
         </div>
@@ -96,13 +93,12 @@ export default async function SiswaProfilePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-500/20 shadow-sm">
+          <Card className="shadow-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-amber-500" />
                 <CardTitle className="text-base">Prestasi Saya</CardTitle>
               </div>
-              <CardDescription>Pencapaian yang telah diverifikasi sekolah</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {myAchievements.length === 0 ? (

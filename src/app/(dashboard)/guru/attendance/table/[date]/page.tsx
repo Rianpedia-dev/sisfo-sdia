@@ -3,6 +3,7 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { ArrowLeft, Table as TableIcon, Download, ChevronLeft, ChevronRight, School } from "lucide-react";
+import { ClipboardListIcon } from "@/components/ui/clipboard-list-icon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -95,17 +96,22 @@ export default async function GuruAttendanceTablePage(props: {
     <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Link href="/guru/attendance">
-            <Button variant="outline" size="icon" className="h-8 w-8">
+            <Button variant="outline" size="icon" className="h-9 w-9">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Tabel Presensi Bulanan</h1>
-            <p className="text-xs text-muted-foreground">
-              Kelas: <strong>{guruClass}</strong> • {monthNames[month]} {year}
-            </p>
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+              <ClipboardListIcon className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Tabel Presensi Bulanan</h1>
+              <p className="text-xs text-muted-foreground">
+                Kelas: <strong>{guruClass}</strong> • {monthNames[month]} {year}
+              </p>
+            </div>
           </div>
         </div>
 

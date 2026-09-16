@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -38,9 +38,6 @@ export default async function SiswaLatenessPage() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Data Keterlambatan Hadir</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Catatan riwayat waktu hadir terlambat dan alasan yang dicatat oleh guru piket / wali kelas.
-        </p>
       </div>
 
       <Card className="shadow-sm">
@@ -51,7 +48,6 @@ export default async function SiswaLatenessPage() {
               Total: {latenessList.length} Kali
             </Badge>
           </div>
-          <CardDescription>Halaman ini bersifat hanya-lihat (view-only).</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="rounded-xl border overflow-hidden">

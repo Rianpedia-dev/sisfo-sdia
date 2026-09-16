@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface AttendanceCalendarClientProps {
@@ -53,11 +53,8 @@ export function AttendanceCalendarClient({ filledDates, guruClass }: AttendanceC
       <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
         <div>
           <CardTitle className="text-lg">
-            Kalender Presensi Kelas {guruClass}
+            Kalender Presensi {guruClass ? (guruClass.startsWith("Kelas") ? guruClass : `Kelas ${guruClass}`) : "Kelas"}
           </CardTitle>
-          <CardDescription>
-            Klik tanggal untuk membuka lembar absensi harian. Tanggal bercentang menandakan absensi telah tercatat.
-          </CardDescription>
         </div>
 
         <div className="flex items-center gap-2">

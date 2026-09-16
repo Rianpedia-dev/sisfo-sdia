@@ -29,6 +29,8 @@ export class AnnouncementService {
         pengumuman: data.pengumuman,
         file: data.file || null,
         like: "0",
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     });
 

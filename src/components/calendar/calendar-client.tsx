@@ -203,6 +203,7 @@ export function CalendarClient({
     <div className="w-full">
       <EventManager
         events={events}
+        canManage={canManage}
         onEventCreate={canManage ? handleEventCreate : undefined}
         onEventUpdate={canManage ? handleEventUpdate : undefined}
         onEventDelete={canManage ? handleEventDelete : undefined}

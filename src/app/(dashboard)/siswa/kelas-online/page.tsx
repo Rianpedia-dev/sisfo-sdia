@@ -115,9 +115,6 @@ export default async function SiswaKelasOnlinePage() {
         <h1 className="text-2xl font-bold tracking-tight">
           Kelas Online
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Bergabung ke kelas online yang sedang berlangsung
-        </p>
       </div>
 
       {/* Active Classes */}

@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Crown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { UserAvatar } from "@/components/ui/user-avatar"
 
 // Types
 interface LeaderboardRanking {
@@ -189,16 +190,13 @@ const LeaderboardPodium = React.forwardRef<
               aria-label={itemLabel}
               className="flex flex-col items-center"
             >
-              {/* Avatar with crown */}
-              <div className="relative mb-2.5" aria-hidden="true">
+              <div className="relative mb-2.5">
                 {showAvatar ? (
-                  <img
+                  <UserAvatar
                     src={avatarSrc}
-                    alt={`${displayName} avatar`}
+                    gender={ranking.gender}
+                    alt={displayName}
                     className={cn("rounded-full object-cover transition-transform duration-200 hover:scale-105", avatarSize)}
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = defaultAvatar
-                    }}
                   />
                 ) : (
                   <div

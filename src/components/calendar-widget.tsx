@@ -105,7 +105,7 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
   };
 
   return (
-    <Card className="overflow-hidden border-emerald-500/20 shadow-sm">
+    <Card className="overflow-hidden border-border rounded-xl shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between border-b pb-3">
         <CardTitle className="text-base font-bold">
           Kalender Kegiatan Sekolah
@@ -115,10 +115,10 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
             {monthNames[month]} {year}
           </span>
           <div className="flex items-center gap-1 ml-2">
-            <Button variant="outline" size="icon" className="h-7 w-7" onClick={prevMonth}>
+            <Button variant="outline" size="icon" className="h-7 w-7 rounded-md" onClick={prevMonth}>
               <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="outline" size="icon" className="h-7 w-7" onClick={nextMonth}>
+            <Button variant="outline" size="icon" className="h-7 w-7 rounded-md" onClick={nextMonth}>
               <ChevronRight className="h-3.5 w-3.5" />
             </Button>
           </div>
@@ -138,7 +138,7 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
         <div className="grid grid-cols-7 gap-1">
           {calendarDays.map((d, index) => {
             if (d === null) {
-              return <div key={`empty-${index}`} className="min-h-[46px] sm:min-h-[70px] rounded-lg bg-muted/20" />;
+              return <div key={`empty-${index}`} className="min-h-[46px] sm:min-h-[70px] rounded-md bg-muted/20" />;
             }
 
             const dayEvents = getEventsForDay(d);
@@ -155,11 +155,11 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
                     setSelectedEvent(dayEvents[0]);
                   }
                 }}
-                className={`min-h-[46px] sm:min-h-[70px] rounded-lg border p-1 sm:p-1.5 transition-colors ${
+                className={`min-h-[46px] sm:min-h-[70px] rounded-md border p-1 sm:p-1.5 transition-colors ${
                   dayEvents.length > 0 ? "cursor-pointer" : ""
                 } ${
                   isToday
-                    ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20"
+                    ? "border-primary bg-primary/10"
                     : "border-border/60 hover:bg-muted/40"
                 }`}
               >
@@ -167,7 +167,7 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
                   <span
                     className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] sm:text-xs font-semibold ${
                       isToday
-                        ? "bg-emerald-600 text-white"
+                        ? "bg-primary text-primary-foreground"
                         : "text-foreground/80"
                     }`}
                   >
@@ -197,14 +197,14 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
                         e.stopPropagation();
                         setSelectedEvent(ev);
                       }}
-                      className="w-full truncate rounded px-1 py-0.5 text-left text-[10px] font-medium text-white transition-opacity hover:opacity-85"
+                      className="w-full truncate rounded-[var(--radius)] px-1 py-0.5 text-left text-[10px] font-medium text-white transition-opacity hover:opacity-85"
                       style={{ backgroundColor: ev.backgroundColor || "#0284c7" }}
                     >
                       {ev.title}
                     </button>
                   ))}
                   {dayEvents.length > 2 && (
-                    <span className="block text-[10px] text-muted-foreground">
+                    <span className="text-[10px] text-muted-foreground block text-center">
                       +{dayEvents.length - 2} lainnya
                     </span>
                   )}
@@ -215,7 +215,7 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
         </div>
       </CardContent>
 
-      {/* Modal Detail Event */}
+      {/* Detail Dialog */}
       <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
         <DialogContent>
           <DialogHeader>
@@ -234,11 +234,11 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
           {selectedEvent && (
             <div className="space-y-3 py-2 text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-4 w-4 text-emerald-600" />
+                <Clock className="h-4 w-4 text-primary" />
                 <span>Tanggal: {selectedEvent.start} {selectedEvent.end ? `s/d ${selectedEvent.end}` : ""}</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
-                <MapPin className="h-4 w-4 text-emerald-600" />
+                <MapPin className="h-4 w-4 text-primary" />
                 <span>Kelas: {selectedEvent.extendedProps?.kelas || "Semua Kelas"}</span>
               </div>
               {selectedEvent.extendedProps?.from && (
@@ -247,7 +247,7 @@ export function CalendarWidget({ canManage = false }: CalendarWidgetProps) {
                 </div>
               )}
               {selectedEvent.description && (
-                <div className="rounded-lg border bg-muted/40 p-3 text-foreground">
+                <div className="rounded-[var(--radius)] border border-border bg-muted/40 p-3 text-foreground">
                   <p className="font-medium text-xs text-muted-foreground mb-1">Keterangan:</p>
                   <p>{selectedEvent.description}</p>
                 </div>

@@ -3,14 +3,13 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import {
-  AlertTriangle,
-  Clock,
   Trophy,
   Award,
   User,
   Sparkles,
-  CheckCircle2,
 } from "lucide-react";
+import { ClipboardListIcon } from "@/components/ui/clipboard-list-icon";
+import { CalendarDaysIcon } from "@/components/ui/calendar-days-icon";
 import { StatCard } from "@/components/stat-card";
 import { AnnouncementTimeline } from "@/components/announcement-timeline";
 import { PrayerScheduleWidget } from "@/components/prayer-schedule-widget";
@@ -31,8 +30,8 @@ export default async function SiswaDashboardPage() {
   const studentClass = session.kelas || "";
 
   let kelasInfo: any = null;
-  let totalViolations = 0;
-  let totalLateness = 0;
+  let totalHadirMonth = 0;
+  let totalEventsMonth = 0;
   let classmates: any[] = [];
   let bestStudents: any[] = [];
   let achievements: any[] = [];
@@ -44,15 +43,23 @@ export default async function SiswaDashboardPage() {
   let studentName = session.name || "Siswa";
 
   const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const currentYear = now.getFullYear();
+  const currentMonthNum = now.getMonth() + 1;
+  const currentMonthStr = String(currentMonthNum).padStart(2, "0");
+  const todayStr = `${currentYear}-${currentMonthStr}-${String(now.getDate()).padStart(2, "0")}`;
+  const currentYearMonth = `${currentYear}-${currentMonthStr}`;
+
+  const startOfMonth = new Date(currentYear, now.getMonth(), 1, 0, 0, 0, 0);
+  const endOfMonth = new Date(currentYear, now.getMonth() + 1, 0, 23, 59, 59, 999);
 
   try {
     const isNum = /^\d+$/.test(session.id);
-    const [dbUser, dbKelas, dbVio, dbLate, dbClassmates, dbBest, dbPrestasi, dbAnnounce, dbPrayer] =
+    const userIdBigInt = isNum ? BigInt(session.id) : null;
+    const [dbUser, dbKelas, dbHadirMonth, dbEventsMonth, dbClassmates, dbBest, dbPrestasi, dbAnnounce, dbPrayer] =
       await Promise.all([
-        isNum
+        userIdBigInt
           ? prisma.user.findUnique({
-              where: { id: BigInt(session.id) },
+              where: { id: userIdBigInt },
               select: { image: true, point: true, nis: true, name: true, gender: true },
             })
           : null,
@@ -61,14 +68,38 @@ export default async function SiswaDashboardPage() {
               where: { nama_kelas: studentClass },
             })
           : null,
-        prisma.pelanggaran.count({
-          where: { user_id: session.id },
-        }),
-        isNum
-          ? prisma.keterlambatan.count({
-              where: { user_id: BigInt(session.id) },
+        userIdBigInt
+          ? prisma.absen.count({
+              where: {
+                user_id: userIdBigInt,
+                date: { startsWith: currentYearMonth },
+                keterangan: { in: ["Hadir", "hadir", "H"] },
+              },
             })
           : 0,
+        prisma.event.count({
+          where: {
+            AND: [
+              {
+                OR: [
+                  { kelas: "Semua Kelas" },
+                  ...(studentClass ? [{ kelas: studentClass }] : []),
+                  { from: "admin" },
+                  { kelas: "Umum" },
+                ],
+              },
+              {
+                start: { lte: endOfMonth },
+              },
+              {
+                OR: [
+                  { end: { gte: startOfMonth } },
+                  { end: null, start: { gte: startOfMonth } },
+                ],
+              },
+            ],
+          },
+        }),
         studentClass
           ? prisma.user.findMany({
               where: { kelas: studentClass, status: "1" },
@@ -89,7 +120,7 @@ export default async function SiswaDashboardPage() {
           where: {
             OR: [{ from: "IT" }, { from: studentClass }],
           },
-          orderBy: { created_at: "desc" },
+          orderBy: { id: "desc" },
           take: 10,
         }),
         isNum
@@ -115,8 +146,8 @@ export default async function SiswaDashboardPage() {
     });
 
     kelasInfo = dbKelas;
-    totalViolations = dbVio;
-    totalLateness = dbLate;
+    totalHadirMonth = dbHadirMonth;
+    totalEventsMonth = dbEventsMonth;
     classmates = dbClassmates;
     bestStudents = dbBest.map((bs) => {
       const g = genderMap.get(normalizeName(bs.name));
@@ -243,25 +274,14 @@ export default async function SiswaDashboardPage() {
       </div>
 
       {/* Quick Action Banner: Status Sholat Hari Ini */}
-      <Card className="border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20 overflow-hidden">
+      <Card className="border border-border bg-card overflow-hidden rounded-xl">
         <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
-              <CheckCircle2 className="h-6 w-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-sm sm:text-base font-bold text-foreground">Mutaba&apos;ah Sholat Hari Ini</p>
-                <Badge className={completedPrayers === 6 ? "bg-emerald-600 font-mono text-xs px-2 py-0.5" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-mono text-xs px-2 py-0.5"}>
-                  {completedPrayers}/6 Selesai
-                </Badge>
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                {completedPrayers === 6
-                  ? "Alhamdulillah, seluruh checklist ibadah hari ini telah lengkap!"
-                  : `Ada ${6 - completedPrayers} sholat yang belum dicatat. Sentuh tombol untuk mengisi.`
-                }
-              </p>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm sm:text-base font-bold text-foreground">Mutaba&apos;ah Sholat Hari Ini</p>
+              <Badge className={completedPrayers === 6 ? "bg-primary text-primary-foreground font-mono text-xs px-2 py-0.5 rounded-md" : "bg-muted text-muted-foreground font-mono text-xs px-2 py-0.5 rounded-md"}>
+                {completedPrayers}/6 Selesai
+              </Badge>
             </div>
           </div>
           <Link href="/siswa/prayers" className="w-full sm:w-auto shrink-0">
@@ -275,37 +295,36 @@ export default async function SiswaDashboardPage() {
       {/* 4 Stat Cards per PRD 7.4.1 */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard
-          title="Pelanggaran"
-          value={totalViolations}
-          icon={AlertTriangle}
-          description="Total catatan kedisiplinan"
-          variant={totalViolations > 0 ? "rose" : "emerald"}
-          href="/siswa/violations"
+          title="Hadir Bulan Ini"
+          value={`${totalHadirMonth} Hari`}
+          icon={ClipboardListIcon}
+          description="Total kehadiran bulan ini"
+          variant="primary"
+          href="/siswa/attendance"
         />
         <StatCard
-          title="Keterlambatan"
-          value={totalLateness}
-          icon={Clock}
-          description="Catatan hadir terlambat"
-          variant={totalLateness > 0 ? "amber" : "blue"}
-          href="/siswa/lateness"
+          title="Kegiatan Bulan Ini"
+          value={`${totalEventsMonth} Kegiatan`}
+          icon={CalendarDaysIcon}
+          description="Agenda kalender sekolah"
+          variant="accent"
+          href="/siswa/calendar"
         />
         <StatCard
           title="Best Point"
-          value={studentWithMaxPoints?.name ? studentWithMaxPoints.name.split(" ")[0] : "-"}
+          value={studentWithMaxPoints?.name || "-"}
           icon={Trophy}
-          imageSrc="/images/best-point.avif"
           description={studentWithMaxPoints ? `${studentWithMaxPoints.point || 0} Poin Tertinggi` : "Belum ada poin"}
-          variant="amber"
+          variant="secondary"
           href="/siswa/best-point"
+          valueClassName="text-base sm:text-lg lg:text-xl font-bold leading-snug line-clamp-2 break-words"
         />
         <StatCard
           title="Poin Saya"
           value={`${session.role === "siswa" ? (classmates.find((c) => c.id.toString() === session.id)?.point || "0") : "0"} Poin`}
           icon={Award}
-          imageSrc="/images/best-student.avif"
           description="Poin reward Anda"
-          variant="purple"
+          variant="amber"
           href="/siswa/best-student"
         />
       </div>
@@ -330,13 +349,10 @@ export default async function SiswaDashboardPage() {
         {/* Best Student Carousel & Prestasi Siswa */}
         <div className="space-y-6 lg:col-span-5">
           {/* Best Student Box */}
-          <Card className="border border-purple-500/20">
+          <Card className="border border-purple-500/20 rounded-xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                  <CardTitle className="text-base">Best Student Kelas</CardTitle>
-                </div>
+                <CardTitle className="text-base">Best Student Kelas</CardTitle>
                 <Link
                   href="/siswa/best-student"
                   className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline"
@@ -344,7 +360,6 @@ export default async function SiswaDashboardPage() {
                   Lihat Semua
                 </Link>
               </div>
-              <CardDescription>Siswa teladan kelas {studentClass}</CardDescription>
             </CardHeader>
             <CardContent>
               {bestStudents.length === 0 ? (
@@ -378,10 +393,9 @@ export default async function SiswaDashboardPage() {
           </Card>
 
           {/* Prestasi Siswa */}
-          <Card className="border border-amber-500/20">
+          <Card className="border border-amber-500/20 rounded-xl">
             <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-amber-500" />
+              <div className="flex items-center justify-between">
                 <CardTitle className="text-base">Prestasi Teman Sekolah</CardTitle>
               </div>
             </CardHeader>

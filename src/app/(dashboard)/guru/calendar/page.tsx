@@ -16,9 +16,6 @@ export default async function GuruCalendarPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight">Kalender Kegiatan Kelas</h1>
-        <p className="text-sm text-muted-foreground">
-          Jadwalkan agenda belajar, kuis, atau kegiatan ekstrakurikuler khusus untuk kelas {guruClass}.
-        </p>
       </div>
 
       <div className="w-full">

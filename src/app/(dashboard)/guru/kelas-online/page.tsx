@@ -120,9 +120,6 @@ export default async function GuruKelasOnlinePage() {
           <h1 className="text-2xl font-bold tracking-tight">
             Kelas Online
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Buat dan kelola kelas online untuk siswa Anda
-          </p>
         </div>
         {guruClass && (
           <Badge className="w-fit bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/30">

@@ -3,7 +3,7 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { ArrowLeft, Check, X, CheckCircle2, Clock } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -51,15 +51,11 @@ export default async function SiswaPrayerHistoryPage() {
 
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Riwayat Checklist Ibadah Sholat</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Catatan rekapitulasi sholat harian 6 waktu beserta status pengesahan dari guru wali kelas.
-        </p>
       </div>
 
       <Card className="shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Daftar Kehadiran Sholat</CardTitle>
-          <CardDescription>Urut berdasarkan tanggal terbaru</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="rounded-xl border overflow-hidden">

@@ -78,7 +78,7 @@ export function ProfilePhotoUploader({
   };
 
   return (
-    <div className={cn("flex flex-col sm:flex-row items-center gap-5 p-4 rounded-xl border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20", className)}>
+    <div className={cn("flex flex-col sm:flex-row items-center gap-5 p-4 rounded-xl border bg-card", className)}>
       {/* Hidden inputs for form submission */}
       <input
         ref={fileInputRef}
@@ -117,11 +117,11 @@ export function ProfilePhotoUploader({
           }
         }}
         className={cn(
-          "group relative flex h-24 w-24 sm:h-28 sm:w-28 shrink-0 cursor-pointer items-center justify-center rounded-2xl overflow-hidden shadow-md transition-all duration-200",
+          "group relative flex h-24 w-24 sm:h-28 sm:w-28 shrink-0 cursor-pointer items-center justify-center rounded-full overflow-hidden shadow-md transition-all duration-200",
           activeImage
-            ? "border-2 border-emerald-500/50 bg-background"
-            : "border-2 border-dashed border-emerald-500/60 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200",
-          isDragging && "ring-4 ring-emerald-500 scale-105"
+            ? "border border-border bg-background"
+            : "border-2 border-dashed border-muted-foreground/30 bg-muted text-muted-foreground",
+          isDragging && "ring-4 ring-primary scale-105"
         )}
         title="Klik untuk memilih foto profil baru"
       >
@@ -152,9 +152,9 @@ export function ProfilePhotoUploader({
             variant="outline"
             size="sm"
             onClick={openFilePicker}
-            className="gap-2 border-emerald-600/40 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/40 cursor-pointer font-semibold shadow-xs"
+            className="gap-2 border-border text-foreground hover:bg-muted cursor-pointer font-semibold shadow-xs"
           >
-            <Upload className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <Upload className="h-4 w-4 text-primary" />
             <span>Pilih Foto Baru</span>
           </Button>
 
@@ -177,7 +177,7 @@ export function ProfilePhotoUploader({
               variant="ghost"
               size="sm"
               onClick={handleRemovePhoto}
-              className="gap-1.5 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/30 cursor-pointer"
+              className="gap-1.5 text-xs text-destructive hover:bg-destructive/15 hover:text-destructive cursor-pointer"
             >
               <Trash2 className="h-3.5 w-3.5" />
               <span>Hapus Foto</span>
@@ -190,7 +190,7 @@ export function ProfilePhotoUploader({
               variant="ghost"
               size="sm"
               onClick={handleUndoRemove}
-              className="gap-1.5 text-xs text-emerald-700 hover:bg-emerald-50 cursor-pointer"
+              className="gap-1.5 text-xs text-primary hover:bg-muted cursor-pointer"
             >
               <Undo2 className="h-3.5 w-3.5" />
               <span>Batal Hapus</span>
@@ -201,10 +201,10 @@ export function ProfilePhotoUploader({
         {/* Status preview / hints */}
         <div>
           {previewUrl ? (
-            <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-medium">
+            <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-primary font-medium">
               <Sparkles className="h-3.5 w-3.5 animate-pulse" />
               <span>Foto baru dipilih: <strong className="truncate max-w-[180px] inline-block align-bottom">{selectedFileName}</strong></span>
-              <Badge variant="outline" className="bg-emerald-100/80 border-emerald-300 text-[10px] py-0 px-1.5 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+              <Badge variant="outline" className="bg-primary/10 border-primary/30 text-[10px] py-0 px-1.5 text-primary rounded-[var(--radius)]">
                 Belum Tersimpan
               </Badge>
             </div>

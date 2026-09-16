@@ -69,12 +69,9 @@ export default async function GuruProfilePage() {
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Profil Saya</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Kelola informasi identitas pribadi dan penugasan mengajar Anda.
-        </p>
       </div>
 
-      <Card className="border-emerald-500/20 shadow-sm overflow-hidden">
+      <Card className="shadow-sm overflow-hidden">
         <GuruProfileForm teacher={formattedTeacher} classes={formattedClasses} />
       </Card>
     </div>

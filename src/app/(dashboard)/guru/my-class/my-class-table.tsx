@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { getUserProfileImage, getDefaultProfileImage } from "@/lib/utils";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import {
   Table,
   TableBody,
@@ -283,14 +284,11 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
                     <TableCell>
                       <div className="flex items-center gap-2.5">
                         <div className="h-7 w-7 rounded-full overflow-hidden border border-border shrink-0 bg-muted">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={getUserProfileImage(s.image, s.gender)}
+                          <UserAvatar
+                            src={s.image}
+                            gender={s.gender}
                             alt={s.name}
                             className="h-full w-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src = getDefaultProfileImage(s.gender);
-                            }}
                           />
                         </div>
                         <span className="font-semibold text-foreground">{s.name}</span>
@@ -574,14 +572,11 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
           <DialogHeader>
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 rounded-full overflow-hidden border border-border shrink-0 bg-muted">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={getUserProfileImage(profileModalStudent?.image, profileModalStudent?.gender)}
+                <UserAvatar
+                  src={profileModalStudent?.image}
+                  gender={profileModalStudent?.gender}
                   alt={profileModalStudent?.name || "Siswa"}
                   className="h-full w-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = getDefaultProfileImage(profileModalStudent?.gender);
-                  }}
                 />
               </div>
               <div>

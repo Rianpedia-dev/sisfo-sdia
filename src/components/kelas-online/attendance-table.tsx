@@ -1,6 +1,7 @@
 "use client";
 
 import { Clock, ArrowRightLeft } from "lucide-react";
+import { ClipboardListIcon } from "@/components/ui/clipboard-list-icon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface AttendanceRecord {
@@ -38,9 +39,10 @@ export function AttendanceTable({ records, title = "Daftar Hadir" }: AttendanceT
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">
-          {title}
-          <span className="text-sm font-normal text-muted-foreground ml-2">
+        <CardTitle className="text-base flex items-center gap-2">
+          <ClipboardListIcon className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <span>{title}</span>
+          <span className="text-sm font-normal text-muted-foreground ml-1">
             ({siswaRecords.length} siswa)
           </span>
         </CardTitle>

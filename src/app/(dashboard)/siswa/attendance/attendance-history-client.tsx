@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -114,7 +114,6 @@ export function AttendanceHistoryClient() {
             <CardTitle className="text-base">
               Kalender Presensi: {monthNames[month]} {year}
             </CardTitle>
-            <CardDescription>Status kehadiran harian yang dicatat oleh guru kelas</CardDescription>
           </div>
 
           <div className="flex items-center gap-1">

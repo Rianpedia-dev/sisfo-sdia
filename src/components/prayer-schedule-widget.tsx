@@ -82,22 +82,22 @@ export function PrayerScheduleWidget() {
   ];
 
   return (
-    <Card className="overflow-hidden border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card/85 to-card/70 py-4 gap-3">
+    <Card className="overflow-hidden border border-border bg-card rounded-xl py-4 gap-3">
       <CardHeader className="flex flex-row items-center justify-between pb-0">
         <div className="flex items-center gap-2">
-          <Compass className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+          <Compass className="h-5 w-5 text-primary" />
           <CardTitle className="text-base font-bold">Jadwal Sholat Hari Ini</CardTitle>
         </div>
         <CardAction>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground px-2.5 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20">
-            <MapPin className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-            <span className="font-medium text-emerald-700 dark:text-emerald-300">Palembang</span>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground px-2.5 py-1 rounded-md bg-primary/10 border border-primary/25">
+            <MapPin className="h-3 w-3 text-primary" />
+            <span className="font-medium text-primary">Palembang</span>
           </div>
         </CardAction>
       </CardHeader>
       <CardContent className="pt-0">
         {error && (
-          <p className="mb-2 text-xs text-amber-600 dark:text-amber-400">
+          <p className="mb-2 text-xs text-destructive">
             *Menggunakan perkiraan jadwal lokal (API luar jangkauan)
           </p>
         )}
@@ -105,11 +105,11 @@ export function PrayerScheduleWidget() {
           {prayerList.map((p) => (
             <div
               key={p.name}
-              className="flex flex-col items-center justify-center rounded-xl border border-emerald-800/20 bg-emerald-50/50 p-2.5 text-center transition-all hover:bg-emerald-100/60 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40"
+              className="flex flex-col items-center justify-center rounded-lg border border-border bg-muted/40 p-2.5 text-center transition-all hover:border-primary/50 hover:bg-muted/70"
             >
               <span className="text-xs font-medium text-muted-foreground">{p.name}</span>
-              <div className="mt-1 flex items-center gap-1 font-mono text-sm font-bold text-emerald-800 dark:text-emerald-300">
-                <Clock className="h-3 w-3 text-emerald-600/70" />
+              <div className="mt-1 flex items-center gap-1 font-mono text-sm font-bold text-foreground">
+                <Clock className="h-3 w-3 text-primary" />
                 <span>{loading ? "..." : p.time}</span>
               </div>
             </div>

@@ -49,6 +49,7 @@ export interface EventManagerProps {
   defaultView?: "month" | "week" | "day" | "list"
   className?: string
   availableTags?: string[]
+  canManage?: boolean
 }
 
 export const defaultColors = [
@@ -86,7 +87,9 @@ export function EventManager({
   defaultView = "month",
   className,
   availableTags = ["Penting", "Semua Kelas", "Kelas 4", "Kelas 5", "Kelas 6", "Guru", "Wali Murid"],
+  canManage = true,
 }: EventManagerProps) {
+  const isEditable = canManage !== false && (!!onEventCreate || !!onEventUpdate || !!onEventDelete)
   const [events, setEvents] = useState<Event[]>(() =>
     initialEvents.map((e) => ({
       ...e,
@@ -169,6 +172,7 @@ export function EventManager({
   }
 
   const openCreateDialog = (initialDate?: Date, hour?: number) => {
+    if (!isEditable) return
     const start = initialDate ? new Date(initialDate) : new Date()
     if (hour !== undefined) {
       start.setHours(hour, 0, 0, 0)
@@ -190,7 +194,7 @@ export function EventManager({
   }
 
   const handleCreateEvent = useCallback(() => {
-    if (!newEvent.title) return
+    if (!isEditable || !newEvent.title) return
 
     const now = new Date()
     const start = newEvent.startTime ? normalizeDate(newEvent.startTime) : now
@@ -219,10 +223,10 @@ export function EventManager({
       category: categories[0],
       tags: [],
     })
-  }, [newEvent, colors, categories, onEventCreate])
+  }, [isEditable, newEvent, colors, categories, onEventCreate])
 
   const handleUpdateEvent = useCallback(() => {
-    if (!selectedEvent) return
+    if (!isEditable || !selectedEvent) return
 
     const updated = {
       ...selectedEvent,
@@ -234,21 +238,23 @@ export function EventManager({
     onEventUpdate?.(selectedEvent.id, updated)
     setIsDialogOpen(false)
     setSelectedEvent(null)
-  }, [selectedEvent, onEventUpdate])
+  }, [isEditable, selectedEvent, onEventUpdate])
 
   const handleDeleteEvent = useCallback(
     (id: string) => {
+      if (!isEditable) return
       setEvents((prev) => prev.filter((e) => e.id !== id))
       onEventDelete?.(id)
       setIsDialogOpen(false)
       setSelectedEvent(null)
     },
-    [onEventDelete],
+    [isEditable, onEventDelete],
   )
 
   const handleDragStart = useCallback((event: Event) => {
+    if (!isEditable) return
     setDraggedEvent(event)
-  }, [])
+  }, [isEditable])
 
   const handleDragEnd = useCallback(() => {
     setDraggedEvent(null)
@@ -256,7 +262,7 @@ export function EventManager({
 
   const handleDrop = useCallback(
     (date: Date, hour?: number) => {
-      if (!draggedEvent) return
+      if (!isEditable || !draggedEvent) return
 
       const duration = draggedEvent.endTime.getTime() - draggedEvent.startTime.getTime()
       const newStartTime = new Date(date)
@@ -277,7 +283,7 @@ export function EventManager({
       onEventUpdate?.(draggedEvent.id, updatedEvent)
       setDraggedEvent(null)
     },
-    [draggedEvent, onEventUpdate],
+    [isEditable, draggedEvent, onEventUpdate],
   )
 
   const navigateDate = useCallback(
@@ -450,14 +456,16 @@ export function EventManager({
             </Button>
           </div>
 
-          <Button
-            onClick={() => openCreateDialog()}
-            size="lg"
-            className="w-full sm:w-auto"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Agenda Baru
-          </Button>
+          {isEditable && (
+            <Button
+              onClick={() => openCreateDialog()}
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Agenda Baru
+            </Button>
+          )}
         </div>
       </div>
 
@@ -833,186 +841,284 @@ export function EventManager({
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{isCreating ? "Tambah Agenda Baru" : "Detail & Edit Agenda"}</DialogTitle>
+            <DialogTitle>
+              {isCreating
+                ? "Tambah Agenda Baru"
+                : isEditable
+                ? "Detail & Edit Agenda"
+                : "Detail Agenda Kegiatan"}
+            </DialogTitle>
             <DialogDescription>
               {isCreating
                 ? "Tambahkan kegiatan atau agenda baru ke dalam kalender sekolah"
-                : "Lihat dan ubah rincian agenda kegiatan"}
+                : isEditable
+                ? "Lihat dan ubah rincian agenda kegiatan"
+                : "Informasi lengkap rincian agenda kegiatan sekolah"}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Judul Agenda</Label>
-              <Input
-                id="title"
-                value={isCreating ? newEvent.title || "" : selectedEvent?.title || ""}
-                onChange={(e) =>
-                  isCreating
-                    ? setNewEvent((prev) => ({ ...prev, title: e.target.value }))
-                    : setSelectedEvent((prev) => (prev ? { ...prev, title: e.target.value } : null))
-                }
-                placeholder="Contoh: Field Trip Kelas 4 / Ujian Tengah Semester"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Deskripsi / Keterangan</Label>
-              <Textarea
-                id="description"
-                value={isCreating ? newEvent.description || "" : selectedEvent?.description || ""}
-                onChange={(e) =>
-                  isCreating
-                    ? setNewEvent((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    : setSelectedEvent((prev) => (prev ? { ...prev, description: e.target.value } : null))
-                }
-                placeholder="Rincian informasi agenda kegiatan..."
-                rows={3}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="startTime">Waktu Mulai</Label>
-                <Input
-                  id="startTime"
-                  type="datetime-local"
-                  value={
-                    isCreating
-                      ? safeToDateInput(newEvent.startTime)
-                      : safeToDateInput(selectedEvent?.startTime)
-                  }
-                  onChange={(e) => {
-                    const date = new Date(e.target.value)
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, startTime: date }))
-                      : setSelectedEvent((prev) => (prev ? { ...prev, startTime: date } : null))
-                  }}
-                />
+          {!isEditable && selectedEvent ? (
+            <div className="space-y-4 py-2">
+              <div className="space-y-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Judul Kegiatan</span>
+                <h3 className="text-lg font-bold text-foreground leading-snug">{selectedEvent.title}</h3>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="endTime">Waktu Selesai</Label>
-                <Input
-                  id="endTime"
-                  type="datetime-local"
-                  value={
-                    isCreating
-                      ? safeToDateInput(newEvent.endTime)
-                      : safeToDateInput(selectedEvent?.endTime)
-                  }
-                  onChange={(e) => {
-                    const date = new Date(e.target.value)
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, endTime: date }))
-                      : setSelectedEvent((prev) => (prev ? { ...prev, endTime: date } : null))
-                  }}
-                />
-              </div>
-            </div>
+              {selectedEvent.description ? (
+                <div className="space-y-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Deskripsi / Keterangan</span>
+                  <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed bg-muted/40 p-3 rounded-xl border border-border/60">
+                    {selectedEvent.description}
+                  </p>
+                </div>
+              ) : null}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="category">Kategori</Label>
-                <Select
-                  value={isCreating ? newEvent.category || "" : selectedEvent?.category || ""}
-                  onValueChange={(value: any) => {
-                    if (value == null) return
-                    const val = String(value)
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, category: val }))
-                      : setSelectedEvent((prev) => (prev ? { ...prev, category: val } : null))
-                  }}
-                >
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Pilih kategori" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-3 bg-muted/20 p-3.5 rounded-xl border border-border/60 text-xs">
+                <div className="space-y-1">
+                  <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" /> Waktu Mulai
+                  </span>
+                  <p className="font-medium text-foreground">
+                    {selectedEvent.startTime.toLocaleDateString("id-ID", {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" /> Waktu Selesai
+                  </span>
+                  <p className="font-medium text-foreground">
+                    {selectedEvent.endTime.toLocaleDateString("id-ID", {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="color">Warna Label</Label>
-                <Select
-                  value={isCreating ? newEvent.color || colors[0].value : selectedEvent?.color || colors[0].value}
-                  onValueChange={(value: any) => {
-                    if (value == null) return
-                    const val = String(value)
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, color: val }))
-                      : setSelectedEvent((prev) => (prev ? { ...prev, color: val } : null))
-                  }}
-                >
-                  <SelectTrigger id="color">
-                    <SelectValue placeholder="Pilih warna" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colors.map((color) => (
-                      <SelectItem key={color.value} value={color.value}>
-                        <div className="flex items-center gap-2">
-                          <div className={cn("h-4 w-4 rounded", color.bg)} />
-                          {color.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Tags / Sasaran</Label>
-              <div className="flex flex-wrap gap-2">
-                {availableTags.map((tag) => {
-                  const isSelected = isCreating ? newEvent.tags?.includes(tag) : selectedEvent?.tags?.includes(tag)
-                  return (
-                    <Badge
-                      key={tag}
-                      variant={isSelected ? "default" : "outline"}
-                      className="cursor-pointer transition-all hover:scale-105"
-                      onClick={() => toggleTag(tag, isCreating)}
-                    >
-                      {tag}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/50">
+                {selectedEvent.category && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-muted-foreground">Kategori:</span>
+                    <Badge variant="secondary" className="font-semibold text-xs">
+                      {selectedEvent.category}
                     </Badge>
-                  )
-                })}
+                  </div>
+                )}
+
+                {selectedEvent.tags && selectedEvent.tags.length > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-muted-foreground">Sasaran:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {selectedEvent.tags.map((tag) => (
+                        <Badge key={tag} variant="outline" className="text-[11px] bg-background">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Judul Agenda</Label>
+                <Input
+                  id="title"
+                  value={isCreating ? newEvent.title || "" : selectedEvent?.title || ""}
+                  onChange={(e) =>
+                    isCreating
+                      ? setNewEvent((prev) => ({ ...prev, title: e.target.value }))
+                      : setSelectedEvent((prev) => (prev ? { ...prev, title: e.target.value } : null))
+                  }
+                  placeholder="Contoh: Field Trip Kelas 4 / Ujian Tengah Semester"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Deskripsi / Keterangan</Label>
+                <Textarea
+                  id="description"
+                  value={isCreating ? newEvent.description || "" : selectedEvent?.description || ""}
+                  onChange={(e) =>
+                    isCreating
+                      ? setNewEvent((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      : setSelectedEvent((prev) => (prev ? { ...prev, description: e.target.value } : null))
+                  }
+                  placeholder="Rincian informasi agenda kegiatan..."
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="startTime">Waktu Mulai</Label>
+                  <Input
+                    id="startTime"
+                    type="datetime-local"
+                    value={
+                      isCreating
+                        ? safeToDateInput(newEvent.startTime)
+                        : safeToDateInput(selectedEvent?.startTime)
+                    }
+                    onChange={(e) => {
+                      const date = new Date(e.target.value)
+                      isCreating
+                        ? setNewEvent((prev) => ({ ...prev, startTime: date }))
+                        : setSelectedEvent((prev) => (prev ? { ...prev, startTime: date } : null))
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="endTime">Waktu Selesai</Label>
+                  <Input
+                    id="endTime"
+                    type="datetime-local"
+                    value={
+                      isCreating
+                        ? safeToDateInput(newEvent.endTime)
+                        : safeToDateInput(selectedEvent?.endTime)
+                    }
+                    onChange={(e) => {
+                      const date = new Date(e.target.value)
+                      isCreating
+                        ? setNewEvent((prev) => ({ ...prev, endTime: date }))
+                        : setSelectedEvent((prev) => (prev ? { ...prev, endTime: date } : null))
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="category">Kategori</Label>
+                  <Select
+                    value={isCreating ? newEvent.category || "" : selectedEvent?.category || ""}
+                    onValueChange={(value: any) => {
+                      if (value == null) return
+                      const val = String(value)
+                      isCreating
+                        ? setNewEvent((prev) => ({ ...prev, category: val }))
+                        : setSelectedEvent((prev) => (prev ? { ...prev, category: val } : null))
+                    }}
+                  >
+                    <SelectTrigger id="category">
+                      <SelectValue placeholder="Pilih kategori" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="color">Warna Label</Label>
+                  <Select
+                    value={isCreating ? newEvent.color || colors[0].value : selectedEvent?.color || colors[0].value}
+                    onValueChange={(value: any) => {
+                      if (value == null) return
+                      const val = String(value)
+                      isCreating
+                        ? setNewEvent((prev) => ({ ...prev, color: val }))
+                        : setSelectedEvent((prev) => (prev ? { ...prev, color: val } : null))
+                    }}
+                  >
+                    <SelectTrigger id="color">
+                      <SelectValue placeholder="Pilih warna" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {colors.map((color) => (
+                        <SelectItem key={color.value} value={color.value}>
+                          <div className="flex items-center gap-2">
+                            <div className={cn("h-4 w-4 rounded", color.bg)} />
+                            {color.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Tags / Sasaran</Label>
+                <div className="flex flex-wrap gap-2">
+                  {availableTags.map((tag) => {
+                    const isSelected = isCreating ? newEvent.tags?.includes(tag) : selectedEvent?.tags?.includes(tag)
+                    return (
+                      <Badge
+                        key={tag}
+                        variant={isSelected ? "default" : "outline"}
+                        className="cursor-pointer transition-all hover:scale-105"
+                        onClick={() => toggleTag(tag, isCreating)}
+                      >
+                        {tag}
+                      </Badge>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
 
           <DialogFooter className="gap-2 sm:gap-0">
-            {!isCreating && (
+            {!isEditable ? (
               <Button
-                variant="destructive"
-                onClick={() => selectedEvent && handleDeleteEvent(selectedEvent.id)}
+                variant="outline"
+                className="w-full sm:w-auto"
+                onClick={() => {
+                  setIsDialogOpen(false)
+                  setSelectedEvent(null)
+                }}
               >
-                Hapus
+                Tutup
               </Button>
+            ) : (
+              <>
+                {!isCreating && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => selectedEvent && handleDeleteEvent(selectedEvent.id)}
+                  >
+                    Hapus
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsDialogOpen(false)
+                    setIsCreating(false)
+                    setSelectedEvent(null)
+                  }}
+                >
+                  Batal
+                </Button>
+                <Button
+                  onClick={isCreating ? handleCreateEvent : handleUpdateEvent}
+                >
+                  {isCreating ? "Tambah Agenda" : "Simpan Perubahan"}
+                </Button>
+              </>
             )}
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsDialogOpen(false)
-                setIsCreating(false)
-                setSelectedEvent(null)
-              }}
-            >
-              Batal
-            </Button>
-            <Button
-              onClick={isCreating ? handleCreateEvent : handleUpdateEvent}
-            >
-              {isCreating ? "Tambah Agenda" : "Simpan Perubahan"}
-            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

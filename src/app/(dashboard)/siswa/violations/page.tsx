@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -35,9 +35,6 @@ export default async function SiswaViolationsPage() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Data Pelanggaran Kedisiplinan</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Catatan kedisiplinan dan tata tertib yang dicatat oleh dewan guru untuk bahan evaluasi diri.
-        </p>
       </div>
 
       <Card className="shadow-sm">
@@ -48,7 +45,6 @@ export default async function SiswaViolationsPage() {
               Total: {violations.length} Catatan
             </Badge>
           </div>
-          <CardDescription>Halaman ini bersifat hanya-lihat (view-only).</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="rounded-xl border overflow-hidden">

@@ -23,7 +23,7 @@ export default async function AdminDashboardPage() {
         prisma.user.count({ where: { status: { not: "0" } } }),
         prisma.user.count({ where: { status: "0" } }),
         prisma.pengumuman.findMany({
-          orderBy: { created_at: "desc" },
+          orderBy: { id: "desc" },
           take: 10,
         }),
         prisma.restrict.findMany({
@@ -73,36 +73,32 @@ export default async function AdminDashboardPage() {
           title="Jumlah Siswa"
           value={totalSiswa}
           icon={GraduationCap}
-          imageSrc="/images/siswa.avif"
           description="Total siswa aktif"
-          variant="emerald"
+          variant="primary"
           href="/admin/students"
         />
         <StatCard
           title="Jumlah Guru"
           value={totalGuru}
           icon={Users}
-          imageSrc="/images/guru.avif"
           description="Total dewan pengajar"
-          variant="blue"
+          variant="accent"
           href="/admin/teachers"
         />
         <StatCard
           title="Akun Aktif"
           value={totalAktif}
           icon={UserCheck}
-          imageSrc="/images/akun-aktif.avif"
           description="Pengguna terverifikasi"
-          variant="amber"
+          variant="secondary"
           href="/admin/students"
         />
         <StatCard
           title="Akun Non-Aktif"
           value={totalNonAktif}
           icon={UserX}
-          imageSrc="/images/akun-non-aktif.avif"
           description="Menunggu verifikasi admin"
-          variant="rose"
+          variant="amber"
           href="/admin/students"
         />
       </div>
@@ -117,7 +113,7 @@ export default async function AdminDashboardPage() {
           <AnnouncementTimeline
             announcements={formattedAnnouncements}
             userRole="admin"
-            canManage={true}
+            canManage={false}
           />
         </div>
 

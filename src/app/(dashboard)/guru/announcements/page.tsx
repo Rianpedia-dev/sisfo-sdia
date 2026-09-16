@@ -3,7 +3,7 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { Send, Calendar, Edit, Trash2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,7 +26,7 @@ export default async function GuruAnnouncementsPage() {
   try {
     announcements = await prisma.pengumuman.findMany({
       where: { from: guruClass },
-      orderBy: { created_at: "desc" },
+      orderBy: { id: "desc" },
     });
   } catch (e) {
     console.error("Database query error in guru announcements:", e);
@@ -36,9 +36,6 @@ export default async function GuruAnnouncementsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Pengumuman Kelas</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Tulis informasi atau instruksi khusus untuk para siswa di kelas {guruClass}.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
@@ -47,9 +44,6 @@ export default async function GuruAnnouncementsPage() {
           <Card className="border-emerald-500/20 shadow-sm sticky top-20">
             <CardHeader>
               <CardTitle className="text-base">Tulis Pengumuman Baru</CardTitle>
-              <CardDescription>
-                Pengumuman otomatis ditujukan untuk {guruClass}.
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <form

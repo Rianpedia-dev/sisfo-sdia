@@ -90,11 +90,11 @@ export function AnnouncementTimeline({
   return (
     <div className="space-y-4">
       {items.map((item) => (
-        <Card key={item.id} className="relative overflow-hidden border-l-4 border-l-emerald-600 transition-all duration-200 hover:shadow-md">
+        <Card key={item.id} className="relative overflow-hidden rounded-xl border-l-4 border-l-primary transition-all duration-200 hover:shadow-md">
           <CardContent className="p-4 sm:p-5.5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant="secondary" className="bg-emerald-50 text-emerald-800 border-emerald-200/50 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/40 text-xs font-medium">
+                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/25 text-xs font-medium rounded-md">
                   {item.from || "Pengumuman"}
                 </Badge>
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -113,7 +113,7 @@ export function AnnouncementTimeline({
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    className="h-8 w-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/50"
+                    className="h-8 w-8 text-destructive hover:bg-destructive/15 hover:text-destructive"
                     onClick={() => setDeleteId(item.id)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -128,20 +128,20 @@ export function AnnouncementTimeline({
 
             {/* Konten Pengumuman */}
             <div
-              className="prose prose-emerald dark:prose-invert mt-2 max-w-none text-sm text-slate-600 dark:text-slate-300 leading-relaxed break-words"
+              className="prose dark:prose-invert mt-2 max-w-none text-sm text-foreground/85 leading-relaxed break-words"
               dangerouslySetInnerHTML={{ __html: item.pengumuman }}
             />
 
             {/* Lampiran file */}
             {item.file && (
-              <div className="mt-3.5 flex items-center gap-2 rounded-xl border bg-muted/40 p-2.5 text-xs text-foreground">
-                <FileText className="h-4 w-4 text-emerald-600 shrink-0" />
+              <div className="mt-3.5 flex items-center gap-2 rounded-lg border border-border bg-muted/40 p-2.5 text-xs text-foreground">
+                <FileText className="h-4 w-4 text-primary shrink-0" />
                 <span className="font-medium">Lampiran Dokumen:</span>
                 <a
                   href={item.file}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-emerald-600 hover:underline truncate"
+                  className="font-medium text-primary hover:underline truncate"
                 >
                   Unduh / Lihat File
                 </a>

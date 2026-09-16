@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { Trophy } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -86,9 +86,6 @@ export default async function SiswaBestStudentPage() {
         <h1 className="text-2xl font-bold tracking-tight">
           Best Student {studentClass.toLowerCase().startsWith("kelas") ? studentClass : `Kelas ${studentClass || "(Belum ada kelas)"}`}
         </h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Daftar siswa teladan berprestasi yang dianugerahi gelar Best Student oleh wali kelas.
-        </p>
       </div>
 
       {/* Grid of Highlight Badges */}
@@ -120,7 +117,6 @@ export default async function SiswaBestStudentPage() {
       <Card className="shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Daftar Penghargaan Best Student</CardTitle>
-          <CardDescription>Semua penghargaan yang tercatat untuk kelas Anda</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="rounded-xl border overflow-hidden">

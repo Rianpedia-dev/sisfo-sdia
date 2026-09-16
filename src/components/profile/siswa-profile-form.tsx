@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { updateStudentProfileAction } from "@/actions/siswa";
 import { toast } from "sonner";
 import { getDefaultProfileImage } from "@/lib/utils";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 interface SiswaProfileFormProps {
   student: {
@@ -119,39 +120,21 @@ export function SiswaProfileForm({ student }: SiswaProfileFormProps) {
 
       {/* Top Header with Single Unified Avatar & Student Identity */}
       <div className="p-6 pb-5 flex flex-col sm:flex-row items-start sm:items-center gap-5 border-b border-border/60">
-        {/* Interactive Avatar Container */}
-        <div
-          onClick={() => fileInputRef.current?.click()}
-          className="group relative flex h-20 w-20 shrink-0 cursor-pointer items-center justify-center rounded-2xl overflow-hidden border-2 border-emerald-400/50 bg-emerald-100 text-emerald-800 text-2xl font-bold dark:bg-emerald-950 dark:text-emerald-300 shadow-sm transition-all hover:scale-105 hover:ring-4 hover:ring-emerald-500/20"
-          title="Klik untuk mengganti foto profil"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        {/* Avatar Display with Modal Preview on Click */}
+        <div className="relative h-20 w-20 shrink-0 rounded-full overflow-hidden bg-muted shadow-sm">
+          <UserAvatar
             src={activeImage}
+            gender={student.gender}
             alt={student.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = defaultImage;
-            }}
+            className="h-full w-full object-cover"
           />
-
-          {/* Hover overlay with Camera */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/55 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 backdrop-blur-xs">
-            <Camera className="h-5 w-5 mb-0.5 drop-shadow" />
-            <span className="text-[10px] font-semibold">Ganti Foto</span>
-          </div>
-
-          {/* Camera badge */}
-          <div className="absolute bottom-1 right-1 rounded-full bg-emerald-600 p-1 text-white shadow-md group-hover:hidden">
-            <Camera className="h-3 w-3" />
-          </div>
         </div>
 
         {/* Identity info & actions */}
         <div className="flex-1 space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-bold tracking-tight">{student.name}</h2>
-            <Badge className="bg-emerald-600">Siswa Aktif</Badge>
+            <Badge className="bg-primary text-primary-foreground rounded-[var(--radius)]">Siswa Aktif</Badge>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 font-mono text-xs sm:text-sm text-muted-foreground">
@@ -166,7 +149,7 @@ export function SiswaProfileForm({ student }: SiswaProfileFormProps) {
               variant="outline"
               size="sm"
               onClick={() => fileInputRef.current?.click()}
-              className="h-7 px-2.5 text-xs font-semibold border-emerald-600/30 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-950/40 cursor-pointer"
+              className="h-7 px-2.5 text-xs font-semibold border-border text-foreground hover:bg-muted cursor-pointer"
             >
               <Camera className="h-3.5 w-3.5 mr-1" />
               <span>Ganti Foto</span>
@@ -191,7 +174,7 @@ export function SiswaProfileForm({ student }: SiswaProfileFormProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleRemovePhoto}
-                className="h-7 px-2 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/30 cursor-pointer"
+                className="h-7 px-2 text-xs text-destructive hover:bg-destructive/15 hover:text-destructive cursor-pointer"
               >
                 <Trash2 className="h-3 w-3 mr-1" />
                 <span>Hapus Foto</span>
@@ -204,7 +187,7 @@ export function SiswaProfileForm({ student }: SiswaProfileFormProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleUndoRemove}
-                className="h-7 px-2 text-xs text-emerald-700 hover:bg-emerald-50 cursor-pointer"
+                className="h-7 px-2 text-xs text-primary hover:bg-muted cursor-pointer"
               >
                 <Undo2 className="h-3 w-3 mr-1" />
                 <span>Batal Hapus</span>
@@ -212,7 +195,7 @@ export function SiswaProfileForm({ student }: SiswaProfileFormProps) {
             )}
 
             {previewUrl ? (
-              <span className="text-xs text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1">
+              <span className="text-xs text-primary font-medium flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
                 <span>Foto baru dipilih ({selectedFileName})</span>
               </span>

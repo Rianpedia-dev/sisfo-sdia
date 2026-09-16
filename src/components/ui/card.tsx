@@ -56,9 +56,9 @@ function Card({
     <div
       data-slot="card"
       className={cn(
-        "card-elevation text-card-foreground relative overflow-hidden flex flex-col",
+        "card-elevation text-card-foreground relative overflow-hidden flex flex-col rounded-xl",
         enableHover && "card-elevation-hover",
-        elevationSize === "sm" && "card-elevation-sm",
+        elevationSize === "sm" && "card-elevation-sm rounded-lg",
         className
       )}
       {...props}

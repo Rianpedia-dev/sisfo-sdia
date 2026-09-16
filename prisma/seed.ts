@@ -992,6 +992,82 @@ async function main() {
     console.log(`✅ Sample checklist sholat hari ini disiapkan untuk ${studentUser.name}.`);
   }
 
+  // ---------------------------------------------------------------------------
+  // 8. DATA AGENDA & KEGIATAN KALENDER SEKOLAH
+  // ---------------------------------------------------------------------------
+  console.log("\n📅 Menyiapkan Agenda & Kalender Kegiatan Sekolah...");
+  const existEvents = await prisma.event.count();
+  if (existEvents === 0) {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth();
+    const d = now.getDate();
+
+    const defaultEvents = [
+      {
+        title: "Sholat Dhuha & Muroja'ah Pagi",
+        kelas: "Semua Kelas",
+        from: "admin",
+        start: new Date(y, m, d, 7, 15),
+        end: new Date(y, m, d, 8, 0),
+        deskripsi: "Pembiasaan ibadah sholat dhuha berjamaah dan hafalan Juz 30 di Masjid Al-Azhar Cairo",
+        backgroundColor: "green",
+      },
+      {
+        title: "Kuis Tematik Terpadu",
+        kelas: "Semua Kelas",
+        from: "admin",
+        start: new Date(y, m, d + 1, 9, 30),
+        end: new Date(y, m, d + 1, 11, 0),
+        deskripsi: "Evaluasi pemahaman materi tematik harian dan literasi",
+        backgroundColor: "blue",
+      },
+      {
+        title: "Rapat Koordinasi Dewan Guru",
+        kelas: "Semua Kelas",
+        from: "admin",
+        start: new Date(y, m, d + 2, 13, 0),
+        end: new Date(y, m, d + 2, 15, 0),
+        deskripsi: "Evaluasi pembelajaran Cambridge dan koordinasi kurikulum mingguan",
+        backgroundColor: "purple",
+      },
+      {
+        title: "Field Trip Edukasi & Sains",
+        kelas: "Semua Kelas",
+        from: "admin",
+        start: new Date(y, m, d + 4, 8, 0),
+        end: new Date(y, m, d + 4, 14, 30),
+        deskripsi: "Kunjungan edukatif observasi sains dan kebudayaan",
+        backgroundColor: "orange",
+      },
+      {
+        title: "Simulasi Penilaian Tengah Semester",
+        kelas: "Semua Kelas",
+        from: "admin",
+        start: new Date(y, m, d + 6, 10, 0),
+        end: new Date(y, m, d + 6, 12, 0),
+        deskripsi: "Latihan persiapan PTS berbasis CBT dan iPad sekolah",
+        backgroundColor: "red",
+      },
+      {
+        title: "Kajian Keislaman & Keputrian",
+        kelas: "Semua Kelas",
+        from: "admin",
+        start: new Date(y, m, d + 8, 8, 30),
+        end: new Date(y, m, d + 8, 11, 0),
+        deskripsi: "Peningkatan wawasan akhlakul karimah dan sirah nabawiyah",
+        backgroundColor: "pink",
+      },
+    ];
+
+    for (const ev of defaultEvents) {
+      await prisma.event.create({ data: ev });
+    }
+    console.log(`✅ ${defaultEvents.length} agenda kegiatan sekolah berhasil disiapkan.`);
+  } else {
+    console.log(`✅ Data agenda kegiatan sudah ada (${existEvents} kegiatan).`);
+  }
+
   console.log("\n=========================================");
   console.log("🎉 Seeding Database Selesai dengan Sukses!");
   console.log("=========================================");

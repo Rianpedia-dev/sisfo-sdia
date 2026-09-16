@@ -3,6 +3,7 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { ArrowLeft } from "lucide-react";
+import { ClipboardListIcon } from "@/components/ui/clipboard-list-icon";
 import { DailyAttendanceForm } from "./daily-attendance-form";
 import { formatDateIndo } from "@/lib/utils";
 
@@ -71,13 +72,18 @@ export default async function GuruDailyAttendancePage(props: {
         </Link>
       </div>
 
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Form Presensi Harian: {formatDateIndo(date)}
-        </h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Kelas: <strong>{guruClass}</strong> • Jumlah Siswa: <strong>{students.length}</strong>
-        </p>
+      <div className="flex items-center gap-3">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+          <ClipboardListIcon className="h-6 w-6" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Form Presensi Harian: {formatDateIndo(date)}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Kelas: <strong>{guruClass}</strong> • Jumlah Siswa: <strong>{students.length}</strong>
+          </p>
+        </div>
       </div>
 
       <DailyAttendanceForm

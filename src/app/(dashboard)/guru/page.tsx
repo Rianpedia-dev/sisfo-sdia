@@ -2,10 +2,11 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { Users, ClipboardCheck, Trophy, Award, Sparkles, School } from "lucide-react";
+import { Users, Trophy, Award, Sparkles, School } from "lucide-react";
+import { ClipboardListIcon } from "@/components/ui/clipboard-list-icon";
 import { StatCard } from "@/components/stat-card";
 import { AnnouncementTimeline } from "@/components/announcement-timeline";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/ui/user-avatar";
@@ -68,7 +69,7 @@ export default async function GuruDashboardPage() {
           where: {
             OR: [{ from: "IT" }, { from: guruClass }],
           },
-          orderBy: { created_at: "desc" },
+          orderBy: { id: "desc" },
           take: 10,
         }),
       ]);
@@ -131,44 +132,38 @@ export default async function GuruDashboardPage() {
         </div>
       </div>
 
-      {/* Quick Action Banner: Status Absensi Hari Ini */}
-      <Card className="border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20 overflow-hidden">
-        <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className={`flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-xs ${
-              totalAbsenToday > 0 ? "bg-emerald-600" : "bg-amber-500"
-            }`}>
-              <ClipboardCheck className="h-6 w-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-sm sm:text-base font-bold text-foreground">Presensi Kelas Hari Ini</p>
-                <Badge className={totalAbsenToday > 0 ? "bg-emerald-600 text-white font-mono text-xs px-2 py-0.5" : "bg-amber-500 text-white font-mono text-xs px-2 py-0.5"}>
-                  {totalAbsenToday > 0 ? `${attendanceToday} / ${students.length} Hadir` : "Belum Diisi"}
-                </Badge>
+      {/* Quick Action Banner: Status Absensi Hari Ini (Hanya muncul jika belum melakukan absensi hari ini) */}
+      {totalAbsenToday === 0 && (
+        <Card className="border border-amber-500/20 bg-amber-50/40 dark:bg-amber-950/20 overflow-hidden rounded-xl">
+          <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-xs bg-amber-500">
+                <ClipboardListIcon className="h-6 w-6" />
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                {totalAbsenToday > 0
-                  ? `Alhamdulillah, data kehadiran ${guruClass} untuk hari ini telah tercatat.`
-                  : `Kehadiran siswa kelas ${guruClass} untuk hari ini belum diisi. Sentuh tombol untuk mengisi.`
-                }
-              </p>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm sm:text-base font-bold text-foreground">Presensi Kelas Hari Ini</p>
+                  <Badge className="bg-amber-500 text-white font-mono text-xs px-2 py-0.5">
+                    Belum Diisi
+                  </Badge>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-            <Link href={`/guru/attendance/${todayFormatted}`} className="flex-1 sm:flex-none">
-              <Button variant="default" size="default" className="w-full sm:w-auto">
-                {totalAbsenToday > 0 ? "Ubah Presensi" : "Isi Presensi Sekarang"}
-              </Button>
-            </Link>
-            <Link href={`/guru/attendance/table/${todayFormatted}`} className="hidden sm:inline-flex">
-              <Button variant="outline" size="default">
-                Tabel Matriks
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+              <Link href={`/guru/attendance/${todayFormatted}`} className="flex-1 sm:flex-none">
+                <Button variant="default" size="default" className="w-full sm:w-auto">
+                  Isi Presensi Sekarang
+                </Button>
+              </Link>
+              <Link href={`/guru/attendance/table/${todayFormatted}`} className="hidden sm:inline-flex">
+                <Button variant="outline" size="default">
+                  Tabel Matriks
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* 4 Stat Cards per PRD 7.3.1 */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
@@ -176,36 +171,33 @@ export default async function GuruDashboardPage() {
           title="Kelas Saya"
           value={`${students.length} Siswa`}
           icon={Users}
-          imageSrc="/images/siswa.avif"
           description={guruClass || "Belum ada kelas"}
-          variant="emerald"
+          variant="primary"
           href="/guru/my-class"
         />
         <StatCard
           title="Absensi Hari Ini"
           value={totalAbsenToday > 0 ? `${attendanceToday} Hadir` : "Belum diisi"}
-          icon={ClipboardCheck}
-          imageSrc="/images/absensi.avif"
+          icon={ClipboardListIcon}
           description={totalAbsenToday > 0 ? `Dari ${students.length} siswa` : "Buka form absen"}
-          variant="blue"
+          variant="accent"
           href={`/guru/attendance/${todayFormatted}`}
         />
         <StatCard
           title="Best Point"
-          value={studentWithMaxPoints?.name ? studentWithMaxPoints.name.split(" ")[0] : "-"}
+          value={studentWithMaxPoints?.name || "-"}
           icon={Trophy}
-          imageSrc="/images/best-point.avif"
           description={studentWithMaxPoints ? `${studentWithMaxPoints.point || 0} Poin Reward` : "Belum ada poin"}
-          variant="amber"
+          variant="secondary"
           href="/guru/best-point"
+          valueClassName="text-base sm:text-lg lg:text-xl font-bold leading-snug line-clamp-2 break-words"
         />
         <StatCard
           title="Best Student"
           value={`${bestStudents.length} Siswa`}
           icon={Award}
-          imageSrc="/images/best-student.avif"
           description="Siswa teladan kelas"
-          variant="purple"
+          variant="amber"
           href="/guru/best-student"
         />
       </div>
@@ -216,30 +208,21 @@ export default async function GuruDashboardPage() {
         <div className="space-y-3.5 lg:col-span-7">
           <div className="flex items-center justify-between">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Timeline Pengumuman</h2>
-            <Link
-              href="/guru/announcements"
-              className="text-xs font-semibold text-emerald-600 hover:underline"
-            >
-              + Buat Pengumuman
-            </Link>
           </div>
           <AnnouncementTimeline
             announcements={formattedAnnouncements}
             userRole="guru"
-            canManage={true}
+            canManage={false}
           />
         </div>
 
         {/* Right side: Best Student Carousel & Prestasi Siswa */}
         <div className="space-y-6 lg:col-span-5">
           {/* Best Student Box */}
-          <Card className="border border-purple-500/20">
+          <Card className="border border-purple-500/20 rounded-xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                  <CardTitle className="text-base">Best Student Kelas</CardTitle>
-                </div>
+                <CardTitle className="text-base">Best Student Kelas</CardTitle>
                 <Link
                   href="/guru/best-student"
                   className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline"
@@ -247,7 +230,6 @@ export default async function GuruDashboardPage() {
                   Kelola
                 </Link>
               </div>
-              <CardDescription>Daftar siswa berprestasi & teladan di {guruClass}</CardDescription>
             </CardHeader>
             <CardContent>
               {bestStudents.length === 0 ? (
@@ -281,13 +263,10 @@ export default async function GuruDashboardPage() {
           </Card>
 
           {/* Prestasi Siswa Section */}
-          <Card className="border border-amber-500/20">
+          <Card className="border border-amber-500/20 rounded-xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-amber-500" />
-                  <CardTitle className="text-base">Prestasi Terkini</CardTitle>
-                </div>
+                <CardTitle className="text-base">Prestasi Terkini</CardTitle>
                 <Link
                   href="/guru/achievements"
                   className="text-xs font-semibold text-amber-600 hover:underline"

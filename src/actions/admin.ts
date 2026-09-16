@@ -222,6 +222,8 @@ export async function deleteAnnouncementAction(id: string) {
     revalidatePath("/admin");
     revalidatePath("/guru");
     revalidatePath("/siswa");
+    revalidatePath("/admin/announcements");
+    revalidatePath("/guru/announcements");
     return { success: true, message: "Pengumuman berhasil dihapus." };
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : "Gagal menghapus pengumuman.";
@@ -267,6 +269,8 @@ export async function createAnnouncementAction(formData: FormData) {
     revalidatePath("/admin");
     revalidatePath("/guru");
     revalidatePath("/siswa");
+    revalidatePath("/admin/announcements");
+    revalidatePath("/guru/announcements");
     return { success: true, message: "Pengumuman berhasil dipublikasikan." };
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : "Gagal mempublikasikan pengumuman.";
@@ -308,6 +312,9 @@ export async function updateAnnouncementAction(id: string, formData: FormData) {
 
     revalidatePath("/admin");
     revalidatePath("/guru");
+    revalidatePath("/siswa");
+    revalidatePath("/admin/announcements");
+    revalidatePath("/guru/announcements");
     return { success: true, message: "Pengumuman berhasil diperbarui." };
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : "Gagal memperbarui pengumuman.";
