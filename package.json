@@ -19,6 +19,7 @@
     "@base-ui/react": "^1.8.0",
     "@daily-co/daily-js": "^0.92.2",
     "@daily-co/daily-react": "^0.26.0",
+    "@phosphor-icons/react": "^2.1.7",
     "@prisma/adapter-mariadb": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "@tanstack/react-table": "^8.21.3",

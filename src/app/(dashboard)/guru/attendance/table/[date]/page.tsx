@@ -6,6 +6,7 @@ import { ArrowLeft, Table as TableIcon, Download, ChevronLeft, ChevronRight, Sch
 import { ClipboardListIcon } from "@/components/ui/clipboard-list-icon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -117,7 +118,7 @@ export default async function GuruAttendanceTablePage(props: {
 
         <div className="flex items-center gap-2">
           <Link href="/guru/attendance/recap">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs text-emerald-700 border-emerald-600">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs text-emerald-600 border-emerald-600/40 hover:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/40">
               <Download className="h-3.5 w-3.5" /> Download PDF
             </Button>
           </Link>
@@ -156,15 +157,27 @@ export default async function GuruAttendanceTablePage(props: {
               <th className="p-2.5 font-bold border-r w-28 sm:w-44 max-w-[110px] sm:max-w-[180px] sticky left-10 bg-muted/95 z-10 truncate shadow-[3px_0_5px_-2px_rgba(0,0,0,0.15)]">
                 Nama Siswa
               </th>
-              {daysArray.map((d) => (
-                <th key={d} className="p-1 font-bold text-center border-r min-w-[28px] max-w-[28px]">
-                  {d}
-                </th>
-              ))}
-              <th className="p-2 font-bold text-center border-r bg-emerald-100/60 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 w-10">H</th>
-              <th className="p-2 font-bold text-center border-r bg-sky-100/60 text-sky-900 dark:bg-sky-950 dark:text-sky-300 w-10">S</th>
-              <th className="p-2 font-bold text-center border-r bg-amber-100/60 text-amber-900 dark:bg-amber-950 dark:text-amber-300 w-10">I</th>
-              <th className="p-2 font-bold text-center bg-rose-100/60 text-rose-900 dark:bg-rose-950 dark:text-rose-300 w-10">A</th>
+              {daysArray.map((d) => {
+                const isSunday = new Date(year, month - 1, d).getDay() === 0;
+                return (
+                  <th
+                    key={d}
+                    className={cn(
+                      "p-1 font-bold text-center border-r min-w-[30px] max-w-[30px]",
+                      isSunday
+                        ? "text-rose-600 bg-rose-100/80 dark:bg-rose-500/15 dark:text-rose-400 font-extrabold"
+                        : "text-foreground/80"
+                    )}
+                    title={isSunday ? `Hari Minggu (${d} ${monthNames[month]})` : `Tanggal ${d}`}
+                  >
+                    {d}
+                  </th>
+                );
+              })}
+              <th className="p-2 font-extrabold text-center border-r bg-emerald-100 text-emerald-900 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-border w-10" title="Total Hadir">H</th>
+              <th className="p-2 font-extrabold text-center border-r bg-sky-100 text-sky-900 border-sky-200 dark:bg-sky-500/20 dark:text-sky-300 dark:border-border w-10" title="Total Sakit">S</th>
+              <th className="p-2 font-extrabold text-center border-r bg-amber-100 text-amber-950 border-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:border-border w-10" title="Total Izin">I</th>
+              <th className="p-2 font-extrabold text-center bg-rose-100 text-rose-900 dark:bg-rose-500/20 dark:text-rose-300 w-10" title="Total Alpha">A</th>
             </tr>
           </thead>
           <tbody>
@@ -191,45 +204,67 @@ export default async function GuruAttendanceTablePage(props: {
                 });
 
                 return (
-                  <tr key={s.id.toString()} className="border-b hover:bg-muted/30">
-                    <td className="p-2 text-center border-r font-medium sticky left-0 bg-background z-10">
+                  <tr key={s.id.toString()} className="group border-b hover:bg-muted/40 transition-colors">
+                    <td className="p-2 text-center border-r font-medium sticky left-0 bg-card group-hover:bg-muted/60 z-10 transition-colors text-foreground">
                       {idx + 1}
                     </td>
-                    <td className="p-2 border-r font-semibold truncate sticky left-10 bg-background z-10 w-28 sm:w-44 max-w-[110px] sm:max-w-[180px] shadow-[3px_0_5px_-2px_rgba(0,0,0,0.15)]" title={s.name}>
+                    <td className="p-2 border-r font-semibold truncate sticky left-10 bg-card group-hover:bg-muted/60 z-10 w-28 sm:w-44 max-w-[110px] sm:max-w-[180px] shadow-[3px_0_5px_-2px_rgba(0,0,0,0.15)] transition-colors text-foreground" title={s.name}>
                       {s.name}
                     </td>
                     {daysArray.map((d) => {
                       const code = row[d];
-                      const colorClass =
-                        code === "H"
-                          ? "text-emerald-700 font-bold bg-emerald-50 dark:bg-emerald-950/40"
-                          : code === "S"
-                          ? "text-sky-700 font-bold bg-sky-50 dark:bg-sky-950/40"
-                          : code === "I"
-                          ? "text-amber-700 font-bold bg-amber-50 dark:bg-amber-950/40"
-                          : code === "A"
-                          ? "text-rose-700 font-bold bg-rose-50 dark:bg-rose-950/40"
-                          : "";
+                      const isSunday = new Date(year, month - 1, d).getDay() === 0;
 
                       return (
                         <td
                           key={d}
-                          className={`p-1 text-center border-r font-mono text-[11px] ${colorClass}`}
+                          className={cn(
+                            "p-0.5 text-center border-r transition-colors",
+                            !code && isSunday && "bg-rose-50/50 dark:bg-rose-500/[0.06]"
+                          )}
                         >
-                          {code || ""}
+                          {code ? (
+                            <span
+                              className={cn(
+                                "inline-flex h-6 w-6 items-center justify-center rounded-md font-extrabold text-xs leading-none transition-transform select-none shadow-2xs",
+                                code === "H" && "bg-emerald-100 text-emerald-800 border border-emerald-300/80 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40",
+                                code === "S" && "bg-sky-100 text-sky-800 border border-sky-300/80 dark:bg-sky-500/20 dark:text-sky-300 dark:border-sky-500/40",
+                                code === "I" && "bg-amber-100 text-amber-900 border border-amber-300/80 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40",
+                                code === "A" && "bg-rose-100 text-rose-800 border border-rose-300/80 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40"
+                              )}
+                              title={`${s.name} - ${code === "H" ? "Hadir" : code === "S" ? "Sakit" : code === "I" ? "Izin" : "Alpha"} (${d} ${monthNames[month]})`}
+                            >
+                              {code}
+                            </span>
+                          ) : null}
                         </td>
                       );
                     })}
-                    <td className="p-1 text-center border-r font-bold text-emerald-800 bg-emerald-50/40">
+                    <td className="p-1 text-center border-r font-extrabold font-mono text-emerald-800 dark:text-emerald-300 bg-emerald-50/80 dark:bg-emerald-500/10">
                       {countH}
                     </td>
-                    <td className="p-1 text-center border-r font-bold text-sky-800 bg-sky-50/40">
+                    <td className={cn(
+                      "p-1 text-center border-r font-mono",
+                      countS > 0
+                        ? "font-extrabold text-sky-800 dark:text-sky-300 bg-sky-50/80 dark:bg-sky-500/10"
+                        : "text-muted-foreground/35 font-medium bg-sky-50/30 dark:bg-sky-500/5"
+                    )}>
                       {countS}
                     </td>
-                    <td className="p-1 text-center border-r font-bold text-amber-800 bg-amber-50/40">
+                    <td className={cn(
+                      "p-1 text-center border-r font-mono",
+                      countI > 0
+                        ? "font-extrabold text-amber-900 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-500/10"
+                        : "text-muted-foreground/35 font-medium bg-amber-50/30 dark:bg-amber-500/5"
+                    )}>
                       {countI}
                     </td>
-                    <td className="p-1 text-center font-bold text-rose-800 bg-rose-50/40">
+                    <td className={cn(
+                      "p-1 text-center font-mono",
+                      countA > 0
+                        ? "font-extrabold text-rose-800 dark:text-rose-300 bg-rose-50/80 dark:bg-rose-500/10"
+                        : "text-muted-foreground/35 font-medium bg-rose-50/30 dark:bg-rose-500/5"
+                    )}>
                       {countA}
                     </td>
                   </tr>
@@ -276,11 +311,25 @@ export default async function GuruAttendanceTablePage(props: {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0 font-mono text-xs">
-                  <Badge className="bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold" title="Hadir">{countH}H</Badge>
-                  {countS > 0 && <Badge className="bg-sky-600 px-1.5 py-0.5 text-[10px] font-bold" title="Sakit">{countS}S</Badge>}
-                  {countI > 0 && <Badge className="bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold" title="Izin">{countI}I</Badge>}
-                  {countA > 0 && <Badge className="bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold" title="Alpha">{countA}A</Badge>}
+                <div className="flex items-center gap-1.5 shrink-0 font-mono text-xs">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300/80 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40" title="Hadir">
+                    {countH} H
+                  </span>
+                  {countS > 0 && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-sky-100 text-sky-800 border border-sky-300/80 dark:bg-sky-500/20 dark:text-sky-300 dark:border-sky-500/40" title="Sakit">
+                      {countS} S
+                    </span>
+                  )}
+                  {countI > 0 && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300/80 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40" title="Izin">
+                      {countI} I
+                    </span>
+                  )}
+                  {countA > 0 && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-300/80 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40" title="Alpha">
+                      {countA} A
+                    </span>
+                  )}
                 </div>
               </div>
             );
@@ -289,23 +338,31 @@ export default async function GuruAttendanceTablePage(props: {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground p-2">
+      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground p-3 border rounded-xl bg-card shadow-xs">
         <span className="font-semibold text-foreground">Keterangan:</span>
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-3 w-3 rounded-full bg-emerald-500" />
-          <span>H = Hadir</span>
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300/80 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 text-[11px] font-extrabold shadow-2xs">
+            H
+          </span>
+          <span className="font-medium text-foreground/80">Hadir</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-3 w-3 rounded-full bg-sky-500" />
-          <span>S = Sakit</span>
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-sky-100 text-sky-800 border border-sky-300/80 dark:bg-sky-500/20 dark:text-sky-300 dark:border-sky-500/40 text-[11px] font-extrabold shadow-2xs">
+            S
+          </span>
+          <span className="font-medium text-foreground/80">Sakit</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-3 w-3 rounded-full bg-amber-500" />
-          <span>I = Izin</span>
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-amber-100 text-amber-900 border border-amber-300/80 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 text-[11px] font-extrabold shadow-2xs">
+            I
+          </span>
+          <span className="font-medium text-foreground/80">Izin</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-3 w-3 rounded-full bg-rose-500" />
-          <span>A = Alpha</span>
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-rose-100 text-rose-800 border border-rose-300/80 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40 text-[11px] font-extrabold shadow-2xs">
+            A
+          </span>
+          <span className="font-medium text-foreground/80">Alpha</span>
         </div>
       </div>
     </div>

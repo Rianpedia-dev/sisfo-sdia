@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { UserItem } from "@/types";
+import { cn } from "@/lib/utils";
 
 interface RecapClientProps {
   guruClass: string;
@@ -205,16 +206,16 @@ export function RecapClient({
                   <th className="p-3 font-bold border-r">Nama Siswa</th>
                   <th className="p-3 font-bold text-center border-r">NIS</th>
                   <th className="p-3 font-bold text-center border-r">L/P</th>
-                  <th className="p-3 font-bold text-center border-r bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                  <th className="p-3 font-extrabold text-center border-r bg-emerald-100 text-emerald-900 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-border">
                     Hadir (H)
                   </th>
-                  <th className="p-3 font-bold text-center border-r bg-sky-50 text-sky-800 dark:bg-sky-950 dark:text-sky-300">
+                  <th className="p-3 font-extrabold text-center border-r bg-sky-100 text-sky-900 border-sky-200 dark:bg-sky-500/20 dark:text-sky-300 dark:border-border">
                     Sakit (S)
                   </th>
-                  <th className="p-3 font-bold text-center border-r bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                  <th className="p-3 font-extrabold text-center border-r bg-amber-100 text-amber-950 border-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:border-border">
                     Izin (I)
                   </th>
-                  <th className="p-3 font-bold text-center border-r bg-rose-50 text-rose-800 dark:bg-rose-950 dark:text-rose-300">
+                  <th className="p-3 font-extrabold text-center border-r bg-rose-100 text-rose-900 dark:bg-rose-500/20 dark:text-rose-300">
                     Alpha (A)
                   </th>
                   <th className="p-3 font-bold text-center">Persentase</th>
@@ -229,21 +230,36 @@ export function RecapClient({
                   </tr>
                 ) : (
                   studentStats.map((st, idx) => (
-                    <tr key={st.student.id} className="border-b hover:bg-muted/30">
+                    <tr key={st.student.id} className="border-b hover:bg-muted/40 transition-colors">
                       <td className="p-2.5 text-center font-medium border-r">{idx + 1}</td>
                       <td className="p-2.5 font-semibold border-r">{st.student.name}</td>
                       <td className="p-2.5 text-center font-mono text-xs border-r">{st.student.nis || "-"}</td>
                       <td className="p-2.5 text-center border-r">{st.student.gender || "-"}</td>
-                      <td className="p-2.5 text-center font-bold text-emerald-700 border-r bg-emerald-50/30">
+                      <td className="p-2.5 text-center font-extrabold text-emerald-800 dark:text-emerald-300 border-r bg-emerald-50/80 dark:bg-emerald-500/10">
                         {st.hadir}
                       </td>
-                      <td className="p-2.5 text-center font-bold text-sky-700 border-r bg-sky-50/30">
+                      <td className={cn(
+                        "p-2.5 text-center border-r font-mono",
+                        st.sakit > 0
+                          ? "font-extrabold text-sky-800 dark:text-sky-300 bg-sky-50/80 dark:bg-sky-500/10"
+                          : "text-muted-foreground/35 font-medium bg-sky-50/30 dark:bg-sky-500/5"
+                      )}>
                         {st.sakit}
                       </td>
-                      <td className="p-2.5 text-center font-bold text-amber-700 border-r bg-amber-50/30">
+                      <td className={cn(
+                        "p-2.5 text-center border-r font-mono",
+                        st.izin > 0
+                          ? "font-extrabold text-amber-900 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-500/10"
+                          : "text-muted-foreground/35 font-medium bg-amber-50/30 dark:bg-amber-500/5"
+                      )}>
                         {st.izin}
                       </td>
-                      <td className="p-2.5 text-center font-bold text-rose-700 border-r bg-rose-50/30">
+                      <td className={cn(
+                        "p-2.5 text-center border-r font-mono",
+                        st.alpha > 0
+                          ? "font-extrabold text-rose-800 dark:text-rose-300 bg-rose-50/80 dark:bg-rose-500/10"
+                          : "text-muted-foreground/35 font-medium bg-rose-50/30 dark:bg-rose-500/5"
+                      )}>
                         {st.alpha}
                       </td>
                       <td className="p-2.5 text-center font-bold font-mono">
