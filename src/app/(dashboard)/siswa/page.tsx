@@ -232,8 +232,8 @@ export default async function SiswaDashboardPage() {
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Left: Greeting */}
           <div className="space-y-2 max-w-2xl">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
-              Assalamu&apos;alaikum,{" "}
+            <h1 dir="ltr" className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+              <span dir="rtl" className="inline-block">السَّلاَمُ عَلَيْكُمْ</span>,{" "}
               <span className="bg-gradient-to-r from-emerald-200 via-teal-100 to-white bg-clip-text text-transparent">
                 {studentName}
               </span>
@@ -244,7 +244,7 @@ export default async function SiswaDashboardPage() {
             </p>
           </div>
 
-          {/* Right: Glassmorphic Status Card (Kelas, Wali, Poin, NIS) */}
+          {/* Right: Glassmorphic Status Card (Kelas, Wali, NIS) */}
           <div className="flex flex-col gap-2 rounded-2xl bg-white/10 hover:bg-white/[0.12] backdrop-blur-md border border-white/15 p-4 sm:p-4.5 shadow-xl transition-all duration-300 shrink-0 lg:min-w-[260px]">
             <div className="flex items-center justify-between gap-3">
               <div className="font-bold text-sm text-emerald-200">
@@ -260,11 +260,7 @@ export default async function SiswaDashboardPage() {
               <span className="truncate">Wali: <strong className="text-white font-medium">{waliKelas || "Belum ditentukan"}</strong></span>
             </div>
 
-            <div className="flex items-center justify-between gap-3 pt-2.5 mt-1 border-t border-white/10 text-xs">
-              <div className="flex items-center gap-1.5 text-amber-300 font-semibold">
-                <Trophy className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                <span>{studentPoint} Poin Reward</span>
-              </div>
+            <div className="pt-2 mt-0.5 border-t border-white/10 text-xs">
               <span className="text-[11px] font-mono text-emerald-200/70">
                 NIS: {studentNis}
               </span>

@@ -177,20 +177,6 @@ export function Sidebar({
           )}
         </div>
 
-        {/* User Info for Mobile Drawer */}
-        {isMobileDrawer && userName && (
-          <div className="mx-3 mt-3 mb-1 p-2.5 rounded-[var(--radius)] bg-sidebar-accent/15 border border-sidebar-border flex items-center gap-3 shrink-0">
-            <div className="h-9 w-9 rounded-full bg-sidebar-primary text-sidebar-primary-foreground ring-1 ring-border flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-              {userName.substring(0, 2).toUpperCase()}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-sidebar-foreground truncate leading-tight">{userName}</p>
-              <p className="text-[11px] text-sidebar-foreground/75 capitalize mt-0.5">
-                {role === "admin" ? "Administrator" : role === "guru" ? "Guru Pengajar" : (kelas ? `Siswa • ${kelas}` : "Siswa")}
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Nav Menu */}
         <nav

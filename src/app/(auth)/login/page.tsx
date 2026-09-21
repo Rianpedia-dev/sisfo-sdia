@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { loginDirectAction, demoLoginDirectAction } from "@/actions/auth";
+import { PencilLoader } from "@/components/ui/loader-1";
 import "./login.css";
 
 function LoginForm() {
@@ -194,12 +195,13 @@ export default function LoginPage() {
     <div className="limiter">
       <div
         className="container-login100"
-        style={{ backgroundImage: "url('/images/bg-01.jpg')" }}
+        style={{ backgroundImage: "url('/bc.avif')" }}
       >
         <Suspense
           fallback={
-            <div style={{ color: "#ffffff", fontFamily: "Ubuntu-Regular, sans-serif", fontSize: "14px" }}>
-              Memuat halaman login...
+            <div className="flex flex-col items-center justify-center p-8 gap-3">
+              <PencilLoader size="sm" />
+              <p className="text-white text-xs font-medium tracking-wide">Memuat form login...</p>
             </div>
           }
         >

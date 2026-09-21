@@ -123,8 +123,8 @@ export default async function GuruDashboardPage() {
       {/* Header Greeting */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
-            Assalamu&apos;alaikum, {session.name}
+          <h1 dir="ltr" className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+            <span dir="rtl" className="inline-block">السَّلاَمُ عَلَيْكُمْ</span>, {session.name}
           </h1>
           <p className="text-xs sm:text-sm md:text-base text-muted-foreground mt-1 font-normal">
             <span>Wali Kelas: <strong className="text-foreground font-medium">{guruClass || "Belum ditentukan"}</strong></span>

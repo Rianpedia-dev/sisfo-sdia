@@ -29,7 +29,7 @@ function DashboardLayoutContent({
   const { isCollapsed } = useSidebar();
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen bg-transparent text-foreground relative">
       {/* Desktop & Tablet Sidebar */}
       <div
         className={cn(

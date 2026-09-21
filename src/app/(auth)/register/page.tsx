@@ -30,7 +30,7 @@ export default function RegisterTeacherPage() {
   return (
     <div
       className="register-wrapper"
-      style={{ backgroundImage: "url('/images/AlAzhar.jpg')" }}
+      style={{ backgroundImage: "url('/bc.avif')" }}
     >
       <div className="register-inner shadow">
         <div className="image-holder">
