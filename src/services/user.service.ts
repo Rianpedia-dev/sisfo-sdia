@@ -179,18 +179,20 @@ export class UserService {
    * Mengeluarkan sejumlah siswa dari kelas (set kelas = null)
    */
   static async removeStudentsFromClass(studentIds: string[]) {
-    for (const id of studentIds) {
-      await prisma.user.update({
-        where: { id: BigInt(id) },
-        data: { kelas: null },
-      });
-    }
+    if (!studentIds || studentIds.length === 0) return 0;
 
-    return studentIds.length;
+    const result = await prisma.user.updateMany({
+      where: {
+        id: { in: studentIds.map((id) => BigInt(id)) },
+      },
+      data: { kelas: null },
+    });
+
+    return result.count;
   }
 
   /**
-   * Mengimpor data siswa secara massal dari file Excel (base64 buffer)
+   * Mengimpor data siswa secara massal dari file Excel (base64 buffer) dengan batching
    */
   static async importStudentsFromBase64(base64Data: string): Promise<number> {
     const buffer = Buffer.from(base64Data, "base64");
@@ -206,41 +208,48 @@ export class UserService {
     const dataRows = rows.slice(1);
     let importedCount = 0;
 
-    for (const row of dataRows) {
-      if (!row || row.length < 4) continue;
-      const email = String(row[0] || "").trim();
-      const passwordPlain = String(row[2] || row[1] || "123456").trim();
-      const name = String(row[3] || "").trim();
-      const appleid = row[4] ? String(row[4]).trim() : null;
-      const passwordappleid = row[5] ? String(row[5]).trim() : null;
-      const status = row[6] ? String(row[6]).trim() : "1";
-      const gender = row[7] ? String(row[7]).trim() : "L";
+    // Proses dalam chunk 10 baris agar tidak memblokir event loop saat ribuan siswa diimpor
+    const CHUNK_SIZE = 10;
+    for (let i = 0; i < dataRows.length; i += CHUNK_SIZE) {
+      const chunk = dataRows.slice(i, i + CHUNK_SIZE);
+      await Promise.all(
+        chunk.map(async (row) => {
+          if (!row || row.length < 4) return;
+          const email = String(row[0] || "").trim();
+          const passwordPlain = String(row[2] || row[1] || "123456").trim();
+          const name = String(row[3] || "").trim();
+          const appleid = row[4] ? String(row[4]).trim() : null;
+          const passwordappleid = row[5] ? String(row[5]).trim() : null;
+          const status = row[6] ? String(row[6]).trim() : "1";
+          const gender = row[7] ? String(row[7]).trim() : "L";
 
-      if (!email || !name) continue;
+          if (!email || !name) return;
 
-      const hashedPassword = await bcrypt.hash(passwordPlain, 10);
+          const hashedPassword = await bcrypt.hash(passwordPlain, 10);
 
-      await prisma.user.upsert({
-        where: { email },
-        update: {
-          name,
-          appleid,
-          passwordappleid,
-          gender,
-          status,
-        },
-        create: {
-          email,
-          name,
-          password: hashedPassword,
-          password1: passwordPlain,
-          appleid,
-          passwordappleid,
-          status,
-          gender,
-        },
-      });
-      importedCount++;
+          await prisma.user.upsert({
+            where: { email },
+            update: {
+              name,
+              appleid,
+              passwordappleid,
+              gender,
+              status,
+            },
+            create: {
+              email,
+              name,
+              password: hashedPassword,
+              password1: passwordPlain,
+              appleid,
+              passwordappleid,
+              status,
+              gender,
+            },
+          });
+          importedCount++;
+        })
+      );
     }
 
     return importedCount;

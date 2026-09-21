@@ -33,6 +33,8 @@ model User {
   absensi           Absen[]
   keterlambatan     Keterlambatan[]
 
+  @@index([kelas, status])
+  @@index([status])
   @@map("users")
 }
 
@@ -59,6 +61,7 @@ model Pengumuman {
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @updatedAt @db.Timestamp(0)
 
+  @@index([created_at])
   @@map("tbl_pengumuman")
 }
 
@@ -75,6 +78,9 @@ model Absen {
 
   @@unique([user_id, date], map: "tbl_absen_user_id_date_unique")
   @@index([user_id], map: "tbl_absen_user_id_foreign")
+  @@index([kelas, month])
+  @@index([kelas, date])
+  @@index([date])
   @@map("tbl_absen")
 }
 
@@ -94,6 +100,7 @@ model Prayer {
 
   @@id([id, date])
   @@index([id], map: "prayers_id_index")
+  @@index([date])
   @@map("prayers")
 }
 
@@ -109,6 +116,8 @@ model Keterlambatan {
   user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_keterlambatan_user_id_foreign")
 
   @@index([user_id], map: "tbl_keterlambatan_user_id_foreign")
+  @@index([kelas])
+  @@index([created_at])
   @@map("tbl_keterlambatan")
 }
 
@@ -122,6 +131,8 @@ model Pelanggaran {
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @updatedAt @db.Timestamp(0)
 
+  @@index([user_id])
+  @@index([kelas])
   @@map("tbl_pelanggaran")
 }
 
@@ -135,6 +146,8 @@ model Prestasi {
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @updatedAt @db.Timestamp(0)
 
+  @@index([id_user])
+  @@index([kelas])
   @@map("tb_prestasi")
 }
 
@@ -147,6 +160,7 @@ model BestStudent {
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @updatedAt @db.Timestamp(0)
 
+  @@index([kelas])
   @@map("tbl_beststudent")
 }
 
@@ -162,6 +176,8 @@ model Event {
   created_at      DateTime? @db.Timestamp(0)
   updated_at      DateTime? @updatedAt @db.Timestamp(0)
 
+  @@index([start])
+  @@index([kelas])
   @@map("tb_events")
 }
 
@@ -191,6 +207,8 @@ model Like {
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @updatedAt @db.Timestamp(0)
 
+  @@unique([user_id, post_id])
+  @@index([post_id])
   @@map("table_likes")
 }
 
@@ -313,6 +331,8 @@ model KelasOnline {
 
   attendance KelasOnlineAttendance[]
 
+  @@index([status, kelas])
+  @@index([guru_id])
   @@map("tbl_kelas_online")
 }
 

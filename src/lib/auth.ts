@@ -4,8 +4,15 @@ import bcrypt from "bcryptjs";
 import prisma from "./prisma";
 import { getRoleFromStatus } from "./utils";
 
+const authSecret = process.env.AUTH_SECRET;
+if (process.env.NODE_ENV === "production" && !authSecret) {
+  console.warn(
+    "[SECURITY WARNING] AUTH_SECRET tidak disetel di environment production! Segera set AUTH_SECRET di .env untuk keamanan sesi pengguna."
+  );
+}
+
 const SECRET_KEY = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "alazharsdsecretkey2026modernrebuild_at_least_32_chars_long!!"
+  authSecret || "alazharsdsecretkey2026modernrebuild_at_least_32_chars_long!!"
 );
 
 export interface SessionUser {
@@ -71,7 +78,7 @@ export async function authenticateUser(
   email: string,
   passwordPlain: string
 ): Promise<AuthResult> {
-  let user: any = null;
+  let user: Awaited<ReturnType<typeof prisma.user.findUnique>> = null;
 
   try {
     user = await prisma.user.findUnique({
@@ -81,32 +88,67 @@ export async function authenticateUser(
     console.warn("Prisma lookup failed, falling back to mock credentials if matched:", dbErr);
   }
 
-  // Fallback demo credentials if database is offline or user not seeded
+  // Fallback demo credentials hanya jika database offline/kosong DAN demo mode aktif
   if (!user) {
-    const demoAccounts: Record<string, { pw: string; name: string; role: "admin" | "guru" | "siswa"; status: string; kelas?: string; id: string }> = {
-      "admin@gmail.com": { id: "3", pw: "admin123", name: "Administrator IT", role: "admin", status: "3" },
-      "guru@gmail.com": { id: "1", pw: "guru123", name: "Ustadz Ahmad, S.Pd", role: "guru", status: "4", kelas: "Kelas 4 - Mehmed Al Fatih" },
-      "siswa@gmail.com": { id: "2", pw: "siswa123", name: "Muhammad Fatih", role: "siswa", status: "1", kelas: "Kelas 4 - Mehmed Al Fatih" },
-    };
+    const isDemoEnabled =
+      process.env.ENABLE_DEMO_MODE === "true" || process.env.NODE_ENV !== "production";
 
-    const demo = demoAccounts[email.toLowerCase().trim()];
-    if (demo && demo.pw === passwordPlain) {
-      const sessionUser: SessionUser = {
-        id: demo.id,
-        name: demo.name,
-        email: email.toLowerCase().trim(),
-        role: demo.role,
-        status: demo.status,
-        kelas: demo.kelas || null,
-        nis: demo.role === "siswa" ? "20260401" : null,
-        nip: demo.role === "guru" ? "198501012010011001" : null,
-        appleid: `${email.split("@")[0]}@appleid.com`,
+    if (isDemoEnabled) {
+      const demoAccounts: Record<
+        string,
+        {
+          pw: string;
+          name: string;
+          role: "admin" | "guru" | "siswa";
+          status: string;
+          kelas?: string;
+          id: string;
+        }
+      > = {
+        "admin@gmail.com": {
+          id: "3",
+          pw: "admin123",
+          name: "Administrator IT",
+          role: "admin",
+          status: "3",
+        },
+        "guru@gmail.com": {
+          id: "1",
+          pw: "guru123",
+          name: "Ustadz Ahmad, S.Pd",
+          role: "guru",
+          status: "4",
+          kelas: "Kelas 4 - Mehmed Al Fatih",
+        },
+        "siswa@gmail.com": {
+          id: "2",
+          pw: "siswa123",
+          name: "Muhammad Fatih",
+          role: "siswa",
+          status: "1",
+          kelas: "Kelas 4 - Mehmed Al Fatih",
+        },
       };
-      await setSessionCookie(sessionUser);
-      let redirectPath = "/admin";
-      if (demo.role === "guru") redirectPath = "/guru";
-      else if (demo.role === "siswa") redirectPath = "/siswa";
-      return { success: true, redirectPath, user: sessionUser };
+
+      const demo = demoAccounts[email.toLowerCase().trim()];
+      if (demo && demo.pw === passwordPlain) {
+        const sessionUser: SessionUser = {
+          id: demo.id,
+          name: demo.name,
+          email: email.toLowerCase().trim(),
+          role: demo.role,
+          status: demo.status,
+          kelas: demo.kelas || null,
+          nis: demo.role === "siswa" ? "20260401" : null,
+          nip: demo.role === "guru" ? "198501012010011001" : null,
+          appleid: `${email.split("@")[0]}@appleid.com`,
+        };
+        await setSessionCookie(sessionUser);
+        let redirectPath = "/admin";
+        if (demo.role === "guru") redirectPath = "/guru";
+        else if (demo.role === "siswa") redirectPath = "/siswa";
+        return { success: true, redirectPath, user: sessionUser };
+      }
     }
 
     return { success: false, error: "Email atau password salah." };
@@ -132,8 +174,8 @@ export async function authenticateUser(
     isMatch = true;
   }
 
-  // Also check default passwords for seeded accounts if password hash differs
-  if (!isMatch) {
+  // Also check default passwords for seeded accounts if password hash differs and demo mode is allowed
+  if (!isMatch && (process.env.ENABLE_DEMO_MODE === "true" || process.env.NODE_ENV !== "production")) {
     if (email === "admin@gmail.com" && passwordPlain === "admin123") isMatch = true;
     if (email === "guru@gmail.com" && passwordPlain === "guru123") isMatch = true;
     if (email === "siswa@gmail.com" && passwordPlain === "siswa123") isMatch = true;
@@ -178,6 +220,13 @@ export async function authenticateUser(
 export async function loginAsDemoRole(
   role: "admin" | "guru" | "siswa"
 ): Promise<AuthResult> {
+  if (process.env.NODE_ENV === "production" && process.env.ENABLE_DEMO_MODE !== "true") {
+    return {
+      success: false,
+      error: "Demo login dinonaktifkan di lingkungan produksi. Silakan login menggunakan akun terdaftar.",
+    };
+  }
+
   const credentials: Record<string, { email: string; pw: string }> = {
     admin: { email: "admin@gmail.com", pw: "admin123" },
     guru: { email: "guru@gmail.com", pw: "guru123" },
@@ -186,3 +235,4 @@ export async function loginAsDemoRole(
   const cred = credentials[role];
   return authenticateUser(cred.email, cred.pw);
 }
+

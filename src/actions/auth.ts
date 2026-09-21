@@ -5,10 +5,19 @@ import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { authenticateUser, clearSessionCookie, type AuthResult } from "@/lib/auth";
 import { loginSchema, registerTeacherSchema } from "@/lib/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function loginAction(prevState: unknown, formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const email = (formData.get("email") as string) || "";
+  const password = (formData.get("password") as string) || "";
+
+  // Proteksi Rate Limiting (Maks 10 percobaan per menit per email/IP)
+  const rl = checkRateLimit(`login:${email.toLowerCase().trim()}`, 10, 60);
+  if (!rl.success) {
+    return {
+      error: `Terlalu banyak percobaan login. Silakan tunggu ${rl.resetSeconds} detik lagi.`,
+    };
+  }
 
   const validated = loginSchema.safeParse({ email, password });
   if (!validated.success) {
@@ -83,6 +92,9 @@ export async function logoutAction() {
 }
 
 export async function demoLoginAction(role: "admin" | "guru" | "siswa") {
+  if (process.env.NODE_ENV === "production" && process.env.ENABLE_DEMO_MODE !== "true") {
+    redirect("/login?error=demo_disabled");
+  }
   const { loginAsDemoRole } = await import("@/lib/auth");
   const result = await loginAsDemoRole(role);
   if (result.success && result.redirectPath) {
@@ -94,6 +106,15 @@ export async function loginDirectAction(
   email: string,
   passwordPlain: string
 ): Promise<AuthResult> {
+  // Proteksi Rate Limiting
+  const rl = checkRateLimit(`login:${email.toLowerCase().trim()}`, 10, 60);
+  if (!rl.success) {
+    return {
+      success: false,
+      error: `Terlalu banyak percobaan login. Silakan tunggu ${rl.resetSeconds} detik lagi.`,
+    };
+  }
+
   const validated = loginSchema.safeParse({ email, password: passwordPlain });
   if (!validated.success) {
     return {
@@ -109,6 +130,12 @@ export async function loginDirectAction(
 export async function demoLoginDirectAction(
   role: "admin" | "guru" | "siswa"
 ): Promise<AuthResult> {
+  if (process.env.NODE_ENV === "production" && process.env.ENABLE_DEMO_MODE !== "true") {
+    return {
+      success: false,
+      error: "Demo login dinonaktifkan di lingkungan produksi.",
+    };
+  }
   const { loginAsDemoRole } = await import("@/lib/auth");
   return await loginAsDemoRole(role);
 }

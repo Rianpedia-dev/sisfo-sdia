@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { serializeBigInt } from "@/lib/serializer";
 
 export interface AttendanceRecordItem {
   userId: string;
@@ -20,47 +19,42 @@ export interface StudentAttendanceSummary {
 
 export class AttendanceService {
   /**
-   * Menyimpan / memperbarui presensi harian per kelas
+   * Menyimpan / memperbarui presensi harian per kelas secara batch (transaksional)
    */
   static async recordAttendance(
     date: string,
     kelas: string,
     records: AttendanceRecordItem[]
   ) {
+    if (records.length === 0) return true;
+
     const month = date.split("-")[1] || String(new Date().getMonth() + 1);
 
-    for (const record of records) {
+    const operations = records.map((record) => {
       const userIdBigInt = BigInt(record.userId);
-
-      const existing = await prisma.absen.findFirst({
+      return prisma.absen.upsert({
         where: {
+          user_id_date: {
+            user_id: userIdBigInt,
+            date: date,
+          },
+        },
+        update: {
+          keterangan: record.keterangan,
+          kelas,
+          month,
+        },
+        create: {
           user_id: userIdBigInt,
-          date: date,
+          kelas,
+          keterangan: record.keterangan,
+          date,
+          month,
         },
       });
+    });
 
-      if (existing) {
-        await prisma.absen.update({
-          where: { id: existing.id },
-          data: {
-            keterangan: record.keterangan,
-            kelas,
-            month,
-          },
-        });
-      } else {
-        await prisma.absen.create({
-          data: {
-            user_id: userIdBigInt,
-            kelas,
-            keterangan: record.keterangan,
-            date,
-            month,
-          },
-        });
-      }
-    }
-
+    await prisma.$transaction(operations);
     return true;
   }
 

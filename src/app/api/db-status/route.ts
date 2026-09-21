@@ -1,9 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Hanya Admin atau caller dengan header x-status-key yang valid yang boleh mengakses
+  const session = await getSession();
+  const statusKey = request.headers.get("x-status-key") || request.nextUrl.searchParams.get("key");
+  const isKeyValid = process.env.INTERNAL_STATUS_KEY && statusKey === process.env.INTERNAL_STATUS_KEY;
+
+  if (session?.role !== "admin" && !isKeyValid && process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { error: "Unauthorized: Akses status database dibatasi." },
+      { status: 401 }
+    );
+  }
+
   const rawUrl = process.env.DATABASE_URL || "";
   const hasDbUrl = !!rawUrl;
 
@@ -25,9 +38,9 @@ export async function GET() {
   try {
     userCount = await prisma.user.count();
     dbConnected = true;
-  } catch (err: any) {
+  } catch (err: unknown) {
     dbConnected = false;
-    errorDetail = err?.message || String(err);
+    errorDetail = err instanceof Error ? err.message : String(err);
   }
 
   return NextResponse.json({

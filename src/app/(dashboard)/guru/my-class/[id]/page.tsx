@@ -91,7 +91,7 @@ export default async function GuruStudentDetailPage(props: {
         nama: student.name,
         waktu: "07:20 WIB",
         keterangan: "Terjebak macet di Jl. Sudirman",
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
+        created_at: new Date("2026-09-18T07:20:00Z"),
       },
     ];
   }
@@ -103,7 +103,7 @@ export default async function GuruStudentDetailPage(props: {
         nama: student.name,
         kategori: "Kedisiplinan",
         keterangan: "Lupa membawa mushaf Al-Qur'an dan sajadah sholat",
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+        created_at: new Date("2026-09-14T08:00:00Z"),
       },
     ];
   }

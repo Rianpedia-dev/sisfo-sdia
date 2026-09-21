@@ -24,14 +24,22 @@ function createPrismaClient() {
 
     const dbName = parsed.pathname.replace(/^\//, "").split("?")[0] || "sisfo_alazhar";
 
+    const defaultLimit = process.env.NODE_ENV === "production" ? 25 : 5;
+    const poolLimit = parseInt(
+      process.env.DB_CONNECTION_LIMIT || process.env.DATABASE_POOL_SIZE || String(defaultLimit),
+      10
+    ) || defaultLimit;
+
+    const rejectUnauthorized = process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false";
+
     const adapter = new PrismaMariaDb({
       host: parsed.hostname || "localhost",
       port: parsed.port ? parseInt(parsed.port, 10) : 3306,
       user: decodeURIComponent(parsed.username || "root"),
       password: decodeURIComponent(parsed.password || ""),
       database: dbName,
-      connectionLimit: 5,
-      ssl: isLocal ? undefined : { minVersion: "TLSv1.2", rejectUnauthorized: true },
+      connectionLimit: poolLimit,
+      ssl: isLocal ? undefined : { minVersion: "TLSv1.2", rejectUnauthorized },
     });
 
     return new PrismaClient({ adapter });
@@ -44,6 +52,7 @@ function createPrismaClient() {
       user: "root",
       password: "",
       database: "sisfo_alazhar",
+      connectionLimit: 5,
     });
     return new PrismaClient({ adapter });
   }
@@ -51,6 +60,7 @@ function createPrismaClient() {
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Selalu simpan di globalThis agar tidak membuat pool baru pada re-evaluasi server actions
+globalForPrisma.prisma = prisma;
 
 export default prisma;
