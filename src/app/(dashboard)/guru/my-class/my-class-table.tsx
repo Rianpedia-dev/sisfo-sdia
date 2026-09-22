@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   UserPlus,
   UserMinus,
-  Trophy,
   Check,
   X,
   Eye,
@@ -13,8 +12,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  Plus,
-  Minus,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,8 +39,6 @@ import {
 import {
   enrollStudentAction,
   removeStudentsAction,
-  addPointAction,
-  subtractPointAction,
   verifyPrayerAction,
 } from "@/actions/guru";
 import { toast } from "sonner";
@@ -69,8 +64,6 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
   // Modals
   const [openEnrollModal, setOpenEnrollModal] = useState(false);
   const [selectedStudentToEnroll, setSelectedStudentToEnroll] = useState("");
-  const [pointModalStudent, setPointModalStudent] = useState<StudentRow | null>(null);
-  const [pointAmount, setPointAmount] = useState<number>(5);
   const [profileModalStudent, setProfileModalStudent] = useState<StudentRow | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -133,44 +126,6 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
     }
   };
 
-  // Point action
-  const handleAddPoint = async () => {
-    if (!pointModalStudent) return;
-    setIsSubmitting(true);
-    try {
-      const res = await addPointAction(pointModalStudent.id, pointAmount);
-      if (res.success) {
-        setData((prev) =>
-          prev.map((s) =>
-            s.id === pointModalStudent.id ? { ...s, point: String(res.newPoint) } : s
-          )
-        );
-        toast.success(res.message);
-        setPointModalStudent(null);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleSubtractPoint = async () => {
-    if (!pointModalStudent) return;
-    setIsSubmitting(true);
-    try {
-      const res = await subtractPointAction(pointModalStudent.id, pointAmount);
-      if (res.success) {
-        setData((prev) =>
-          prev.map((s) =>
-            s.id === pointModalStudent.id ? { ...s, point: String(res.newPoint) } : s
-          )
-        );
-        toast.success(res.message);
-        setPointModalStudent(null);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // Verify prayer today
   const handleVerifyPrayer = async (studentId: string) => {
@@ -324,16 +279,6 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
                         >
                           <ShieldCheck className="h-4 w-4" />
                         </Button>
-                        {/* Point Reward Modal */}
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          className="h-8 w-8 text-amber-600 hover:bg-amber-50 cursor-pointer"
-                          title="Kelola Poin Siswa"
-                          onClick={() => setPointModalStudent(s)}
-                        >
-                          <Trophy className="h-4 w-4" />
-                        </Button>
                         {/* Full Detail Link */}
                         <Link href={`/guru/my-class/${s.id}`}>
                           <Button
@@ -411,7 +356,7 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
                 </div>
 
                 {/* Action Buttons */}
-                <div className="mt-3 pt-2.5 border-t grid grid-cols-3 gap-2">
+                <div className="mt-3 pt-2.5 border-t grid grid-cols-2 gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -420,15 +365,6 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
                   >
                     <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Sholat</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-xs gap-1 h-9 cursor-pointer"
-                    onClick={() => setPointModalStudent(s)}
-                  >
-                    <Trophy className="h-3.5 w-3.5 text-amber-600" />
-                    <span>Poin</span>
                   </Button>
                   <Link href={`/guru/my-class/${s.id}`}>
                     <Button
@@ -510,61 +446,6 @@ export function MyClassTable({ students, availableStudents, guruClass }: MyClass
         </DialogContent>
       </Dialog>
 
-      {/* Modal Kelola Poin */}
-      <Dialog open={!!pointModalStudent} onOpenChange={(open) => !open && setPointModalStudent(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-amber-500" />
-              <span>Kelola Poin Siswa</span>
-            </DialogTitle>
-            <DialogDescription>
-              Siswa: <strong>{pointModalStudent?.name}</strong> • Poin saat ini:{" "}
-              <strong>{pointModalStudent?.point || 0}</strong>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3 py-2">
-            <Label>Jumlah Poin yang Diberikan / Dikurangi</Label>
-            <div className="flex items-center gap-2">
-              {[5, 10, 20, 50].map((val) => (
-                <Button
-                  key={val}
-                  type="button"
-                  variant={pointAmount === val ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setPointAmount(val)}
-                  className={pointAmount === val ? "bg-amber-600 text-white" : ""}
-                >
-                  +{val}
-                </Button>
-              ))}
-            </div>
-            <Input
-              type="number"
-              value={pointAmount}
-              onChange={(e) => setPointAmount(Math.max(1, parseInt(e.target.value, 10) || 1))}
-              className="mt-2"
-            />
-          </div>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              variant="destructive"
-              onClick={handleSubtractPoint}
-              disabled={isSubmitting}
-              className="gap-1"
-            >
-              <Minus className="h-4 w-4" /> Kurangi {pointAmount}
-            </Button>
-            <Button
-              onClick={handleAddPoint}
-              disabled={isSubmitting}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1"
-            >
-              <Plus className="h-4 w-4" /> Tambah +{pointAmount}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Modal Profil Singkat & Verifikasi Sholat */}
       <Dialog open={!!profileModalStudent} onOpenChange={(open) => !open && setProfileModalStudent(null)}>

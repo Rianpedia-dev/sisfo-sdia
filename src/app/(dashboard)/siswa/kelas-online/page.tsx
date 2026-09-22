@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { History, Inbox } from "lucide-react";
+import { Inbox } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { SiswaRoomList } from "./siswa-room-list";
+import { SiswaHistorySection } from "./siswa-history-section";
 
 export const dynamic = "force-dynamic";
 
@@ -144,43 +145,7 @@ export default async function SiswaKelasOnlinePage() {
       )}
 
       {/* History */}
-      <div className="space-y-3">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <History className="h-5 w-5 text-slate-500" />
-          Riwayat Kelas Sebelumnya
-        </h2>
-        {historyRecords.length > 0 ? (
-          <div className="space-y-2">
-            {historyRecords.map((rec) => (
-              <Card key={rec.id} className="border-slate-200 dark:border-slate-800">
-                <CardContent className="p-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-sm">{rec.mata_pelajaran}</p>
-                    <p className="text-xs text-muted-foreground">
-                      👨‍🏫 {rec.guru_name} • {rec.date}
-                    </p>
-                  </div>
-                  <Badge variant="secondary" className="text-xs">
-                    ⏱{" "}
-                    {rec.duration_minutes
-                      ? rec.duration_minutes < 60
-                        ? `${rec.duration_minutes} menit`
-                        : `${Math.floor(rec.duration_minutes / 60)}j ${rec.duration_minutes % 60}m`
-                      : "-"}
-                  </Badge>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              <History className="h-8 w-8 mx-auto mb-2 opacity-40" />
-              <p>Belum ada riwayat kelas online</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      <SiswaHistorySection records={historyRecords} />
     </div>
   );
 }

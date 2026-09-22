@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { History, Wifi } from "lucide-react";
+import { Wifi } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { CreateRoomForm } from "@/components/kelas-online/create-room-form";
 import { GuruRoomList } from "./guru-room-list";
+import { GuruHistorySection } from "./guru-history-section";
 
 export const dynamic = "force-dynamic";
 
@@ -146,59 +146,7 @@ export default async function GuruKelasOnlinePage() {
       )}
 
       {/* History */}
-      <div className="space-y-3">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <History className="h-5 w-5 text-slate-500" />
-          Riwayat Kelas Online
-        </h2>
-        {endedRooms.length > 0 ? (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {endedRooms.map((room) => (
-              <Card key={room.id} className="border-slate-200 dark:border-slate-800">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="font-semibold">
-                        {room.mata_pelajaran || "Kelas Online"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {room.started_at
-                          ? new Date(room.started_at).toLocaleDateString("id-ID", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })
-                          : "-"}
-                      </p>
-                    </div>
-                    <Badge variant="secondary" className="text-xs">
-                      ⚫ Selesai
-                    </Badge>
-                  </div>
-                  <div className="flex gap-4 text-xs text-muted-foreground">
-                    <span>
-                      ⏱{" "}
-                      {room.duration_minutes
-                        ? room.duration_minutes < 60
-                          ? `${room.duration_minutes} menit`
-                          : `${Math.floor(room.duration_minutes / 60)}j ${room.duration_minutes % 60}m`
-                        : "-"}
-                    </span>
-                    <span>👥 {room.total_attendance} hadir</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              <History className="h-8 w-8 mx-auto mb-2 opacity-40" />
-              <p>Belum ada riwayat kelas online</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      <GuruHistorySection rooms={endedRooms} />
     </div>
   );
 }

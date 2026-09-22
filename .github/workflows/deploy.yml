@@ -1,0 +1,60 @@
+name: Deploy to Windows Server
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: [self-hosted, windows-server]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy Code to Application Directory
+        shell: powershell
+        run: |
+          Write-Host "Syncing code to production directory..."
+          $targetDir = "C:\apps\sisfo-alazhar-sd"
+          
+          if (!(Test-Path -Path $targetDir)) {
+            New-Item -ItemType Directory -Path $targetDir -Force
+          }
+          
+          # Sinkronisasi file kecuali node_modules, .git, dan .env
+          robocopy . $targetDir /E /XD node_modules .git /XF .env /NFL /NDL /NJH /NJS /nc /ns /np
+          
+          # Robocopy mengembalikan exit code < 8 jika berhasil/ada file yang tersalin
+          if ($LASTEXITCODE -ge 8) {
+            throw "Robocopy failed with exit code $LASTEXITCODE"
+          }
+
+      - name: Install Dependencies, Migrate & Build
+        shell: powershell
+        run: |
+          cd C:\apps\sisfo-alazhar-sd
+          
+          Write-Host "Installing dependencies..."
+          npm ci
+          
+          Write-Host "Generating Prisma Client..."
+          npx prisma generate
+          
+          Write-Host "Pushing Database Schema..."
+          npx prisma db push --skip-generate
+          
+          Write-Host "Building Next.js Application..."
+          npm run build
+
+      - name: Reload PM2 Process
+        shell: powershell
+        run: |
+          cd C:\apps\sisfo-alazhar-sd
+          Write-Host "Reloading application with zero-downtime..."
+          pm2 reload sisfo-sdia || pm2 start ecosystem.config.cjs
+          pm2 save
+          Write-Host "Deployment completed successfully!"
