@@ -364,7 +364,7 @@ export default async function GuruStudentDetailPage(props: {
                     {violationsList.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
-                          Tidak ada catatan pelanggaran untuk siswa ini.
+                          Tidak ada catatan pelanggaran untuk siswa ini
                         </TableCell>
                       </TableRow>
                     ) : (
