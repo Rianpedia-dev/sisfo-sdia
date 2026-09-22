@@ -1,5 +1,5 @@
 # Panduan Lengkap & Praktis Deploy ke Windows Server (MSTSC / RDP) & CI/CD GitHub
-test no acc push
+test no acc push 22
 Dokumen ini berisi panduan langkah demi langkah (*step-by-step*) untuk melakukan deployment aplikasi **SISFO SDIA Cairo** (Next.js 16 + Prisma + MySQL) ke **Windows Server** menggunakan akses Remote Desktop (`mstsc`), serta konfigurasi **CI/CD otomatis menggunakan GitHub Actions**.
 
 ---
