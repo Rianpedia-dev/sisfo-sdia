@@ -1,6 +1,6 @@
 # PRD – Sistem Informasi Sekolah (SISFO) SD Islam Al-Azhar Cairo Palembang
 
-> **Versi:** 2.0 (Rebuild)
+> **Versi:** 2.0 (Rebuild) testing aja 
 > **Tanggal:** 10 September 2026
 > **Deskripsi:** Dokumen ini adalah Product Requirements Document lengkap untuk membangun ulang Sisfo Al-Azhar menggunakan stack modern: **Next.js (App Router) + Tailwind CSS + shadcn/ui + MySQL (Prisma ORM)**.
 > Dokumen disusun berdasarkan reverse-engineering menyeluruh dari project Laravel 8 yang sudah berjalan.
